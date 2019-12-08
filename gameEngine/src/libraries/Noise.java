@@ -1,18 +1,20 @@
 package libraries;
 
+import threeDimensions.Vec2;
+
 public final class Noise {
 	
-	static public double noise(double x, double y, double z, int octaves, double persistence, double lacunarity) {
+	static public double noise(double x, double y, double z, int octaves, double persistence, double lacunarity, Vec2[] offsets) {
 		assert(octaves > 0);
 		if(octaves == 1) {
-			return noise(x, y, z);
-		} else {
+			return noise(x + offsets[0].x, y + offsets[0].y, z);
+		} else { 
 			double freq = 1;;
 			double amp = 1;
 			double total = 0;
 			double max = 0;
 			for (int i = 0; i < octaves; i++) {
-				total += amp * noise(x * freq, y * freq, z * freq);
+				total += amp * noise(x * freq + offsets[i].x, y * freq + offsets[i].y, z * freq);
 				max += amp;
 				amp *= persistence;
 				freq *= lacunarity;
