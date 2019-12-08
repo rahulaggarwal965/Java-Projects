@@ -9,9 +9,12 @@ import java.util.stream.IntStream;
 import components.Gradient;
 import gameEngine.GameEngine;
 import gameEngine.IGameLogic;
+import libraries.LinearInterpolator;
 import libraries.Maths;
+import libraries.MonotoneCubicInterpolator;
 import libraries.Noise;
 import threeDimensions.Graphics3D;
+import threeDimensions.PackedColor;
 import threeDimensions.Vec2;
 import threeDimensions.Vec3;
 
@@ -34,10 +37,18 @@ public class PerlinNoiseTests implements IGameLogic {
 	//private Vec2 offsets[]
 	
 	private Gradient gr;
+	private float[] xValues, yValues;
+	private LinearInterpolator l;
+	private MonotoneCubicInterpolator m;
 	
 	@Override
 	public void init(Graphics g) throws Exception {
 		this.pixels = new int[GameEngine.displayHeight * GameEngine.displayWidth];
+		this.xValues = new float[] {0f, 0.33f, 0.5f, 0.7f, 0.9f, 1f};
+		this.yValues = new float[] {0.7f, 0.4f, 0.5f, 0.9f, 0.6f, 0.3f};
+		this.m = new MonotoneCubicInterpolator(xValues, yValues);
+		this.l = new LinearInterpolator(xValues, yValues);
+				
 		this.gr = new Gradient(
 				new Vec3[] {
 						new Vec3(0, 0, 0),
@@ -84,7 +95,7 @@ public class PerlinNoiseTests implements IGameLogic {
 		if(update) {
 			System.out.printf("Octaves: %d, Persistence: %1.9f, Lacunarity: %5.5f, Scale: %9.4f\n", this.octaves, this.persistence, this.lacunarity, this.scale);
 			this.update = false;
-			this.updatePixels();
+			//this.updatePixels();
 		}
 	}
 
@@ -94,8 +105,15 @@ public class PerlinNoiseTests implements IGameLogic {
 
 	@Override
 	public void render3D(Graphics3D g3d) {
-		
-		g3d.drawPixels(this.pixels);
+		for (int i = 0; i < GameEngine.displayWidth; i++) {
+			for (float f : this.yValues) {
+				g3d.drawPixel(i, (int) (f * (GameEngine.displayHeight - 1)), PackedColor.White);
+			}
+			float x = (float) i / GameEngine.displayWidth;
+			g3d.drawPixel(i, (int) (this.m.interpolate(x) * (GameEngine.displayHeight - 1)), PackedColor.White);
+			g3d.drawPixel(i, (int) (this.l.interpolate(x) * (GameEngine.displayHeight - 1)), PackedColor.Green);
+		}
+		//g3d.drawPixels(this.pixels);
 	}
 	
 	public int updatePixel(int index, Vec2[] offsets) {

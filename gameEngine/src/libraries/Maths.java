@@ -15,6 +15,10 @@ public class Maths {
 		return (x - a) / (b - a) * (d - c) + c;
 	}
 	
+	public static float interpolate(float a, float b, float t) {
+		return a + (b - a) * t;
+	}
+	
 	public static <T extends Comparable<T>> T clamp(T value, T min, T max) {
 		if(value.compareTo(min) < 0) {
 			return min;
