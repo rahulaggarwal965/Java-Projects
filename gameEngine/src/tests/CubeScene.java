@@ -22,12 +22,17 @@ public class CubeScene implements IGameLogic {
 	private IndexedTriangleList<Vertex> iTriList;
 	private float tx = 0.0f, ty = 0.0f, tz = 0.0f, offsetZ = 2.0f;
 	
+	public static void main(String[] args) {
+		CubeScene cs = new CubeScene();
+		GameEngine gameEngine = new GameEngine(60, 60, 3, cs, 800, 600, "CubeScene", true);
+	}
+	
 	@Override
 	public void init(Graphics g) throws Exception {
 		// TODO Auto-generated method stub
 		this.pipeline = new Pipeline();
 		this.iTriList = Cube.getTexturedTriangles(1.0f, 1);
-		pipeline.fragShader.setTexture(GameEngine.loadImage("/Users/infinity/Desktop/test_img.jpg"));
+		pipeline.fragShader.setTexture(GameEngine.loadImage("/Users/infinity/Desktop/SauronEye.png"));
 	}
 
 	@Override

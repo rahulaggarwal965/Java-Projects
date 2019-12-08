@@ -16,7 +16,7 @@ import threeDimensions.Vec3;
 
 //NEEDS FURTHER REFACTORING
 //TODO: Encapsulate Camera, Encapsulate Shapes, Maybe: Encapsulate RayMarching
-public class RefactoredRaymarching implements IGameLogic {
+public class RaymarchingTests implements IGameLogic {
 	
 	private final int MAX_STEPS = 100;
 	private final float MAX_DIST = 100f;
@@ -48,6 +48,16 @@ public class RefactoredRaymarching implements IGameLogic {
 	private float lightVelocityY = 0.01f;
 	
 	private Vec3 transformedLightPosition = new Vec3(0, 0, 0);
+	
+	public static void main(String[] args) {
+		try {
+			RaymarchingTests rt = new RaymarchingTests();
+			GameEngine gameEngine = new GameEngine(60, 60, 3, rt, 800, 600, "Raymarching", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
 	
 	public float boxDistance(Vec3 p, Vec3 s) {
 		return p._abs()._subtract(s)._max(0).len();

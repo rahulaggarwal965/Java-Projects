@@ -14,10 +14,8 @@ public class Graphics3D {
 	}
 	
 	public void clear(int color) {
-		for (int j = 0; j < GameEngine.displayHeight; j++) {
-			for (int i = 0; i < GameEngine.displayWidth; i++) {
-				this.pixels[j * GameEngine.displayWidth + i] = color;
-			}
+		for (int i = 0; i < this.pixels.length; i++) {
+			this.pixels[i] = color;
 		}
 	}
 	

@@ -55,7 +55,10 @@ public class Fractal implements IGameLogic {
 	private int currentLayer = 1;
 	
 	
-	
+	public static void main(String[] args) {
+		Fractal fractal = new Fractal();
+		GameEngine gameEngine = new GameEngine(60, 60, 3, fractal, 80, 60, "Fractal", true);
+	}
 	
 	public void drawSquares(Graphics2D g2d, Rectangle r, int layer) {
 		if(layer != this.currentLayer) {

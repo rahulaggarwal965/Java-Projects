@@ -69,7 +69,7 @@ public class GameEngine extends Canvas implements Runnable {
 		window.pack();
 		window.setTitle(title);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setResizable(false);
+		//window.setResizable(false);
 		window.setVisible(true);
 		
 		this.startThread();
