@@ -1,5 +1,6 @@
 package tests;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -34,7 +35,6 @@ public class PerlinNoiseTests implements IGameLogic {
 	private double lacunarity = 2.0;
 	private float x = 0, y = 0;
 	private int octaves = 6;
-	//private Vec2 offsets[]
 	
 	private Gradient gr;
 	private float[] xValues, yValues;
@@ -95,24 +95,28 @@ public class PerlinNoiseTests implements IGameLogic {
 		if(update) {
 			System.out.printf("Octaves: %d, Persistence: %1.9f, Lacunarity: %5.5f, Scale: %9.4f\n", this.octaves, this.persistence, this.lacunarity, this.scale);
 			this.update = false;
-			//this.updatePixels();
+			this.updatePixels();
 		}
 	}
 
 	@Override
 	public void render(Graphics2D g2d) {
+
 	}
 
 	@Override
 	public void render3D(Graphics3D g3d) {
+		
+		g3d.fillCircle(450, 450, 200, PackedColor.White);
+		/*for (float f : this.yValues) {
+			float v = f * (GameEngine.displayHeight - 1);
+			g3d.drawLine(0, v, GameEngine.displayWidth, v, PackedColor.White);
+		}
 		for (int i = 0; i < GameEngine.displayWidth; i++) {
-			for (float f : this.yValues) {
-				g3d.drawPixel(i, (int) (f * (GameEngine.displayHeight - 1)), PackedColor.White);
-			}
 			float x = (float) i / GameEngine.displayWidth;
 			g3d.drawPixel(i, (int) (this.m.interpolate(x) * (GameEngine.displayHeight - 1)), PackedColor.White);
 			g3d.drawPixel(i, (int) (this.l.interpolate(x) * (GameEngine.displayHeight - 1)), PackedColor.Green);
-		}
+		}*/
 		//g3d.drawPixels(this.pixels);
 	}
 	

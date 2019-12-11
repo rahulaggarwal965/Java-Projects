@@ -1,5 +1,6 @@
 package threeDimensions;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
@@ -79,6 +80,79 @@ public class Graphics3D {
 	
 	public void drawLine(Vec2 v1, Vec2 v2, int color) {
 		this.drawLine(v1.x, v1.y, v2.x, v2.y, color);
+	}
+	
+	public void fillRectangle(float x, float y, float width, float height, int color) {
+		int sY = (int) y; int sX = (int) x; int eY = (int) (y + height); int eX = (int) (x + width);
+		if(sY >= GameEngine.displayHeight || eY <= 0 || sX >= GameEngine.displayWidth || eX <= 0) return;
+		else {
+			if(sY < 0) sY = 0;
+			if(eY > GameEngine.displayHeight) eY = GameEngine.displayHeight;
+			if(sX < 0) sX = 0;
+			if(eX > GameEngine.displayWidth) eX = GameEngine.displayWidth;
+		}
+		for (int j = sY; j < eY; j++) {
+			for (int i = sX; i < eX; i++) {
+				this.pixels[j * GameEngine.displayWidth + i] = color;
+			}
+		}
+	}
+
+	public void fillRectangle(Rectangle r, int color) {
+		fillRectangle(r.x, r.y, r.width, r.height, color);
+	}
+	
+	private void drawSymmetricCirclePoint(int xc, int yc, int x, int y, int color) {
+		this.drawPixel(xc+x, yc+y, color);
+		this.drawPixel(xc-x, yc+y, color);
+		this.drawPixel(xc+x, yc-y, color);
+		this.drawPixel(xc-x, yc-y, color);
+		this.drawPixel(xc+y, yc+x, color);
+		this.drawPixel(xc-y, yc+x, color);
+		this.drawPixel(xc+y, yc-x, color);
+		this.drawPixel(xc-y, yc-x, color);
+	}
+	
+	//Center Based
+	public void drawCircle(float x0, float y0, float r, int color) {
+		int xc = (int) x0, yc = (int) y0;
+		int x = 0;
+		int y = (int) r;
+		int d = (int) (1 - r);
+		this.drawSymmetricCirclePoint(xc, yc, x, y, color);
+		
+		while(y > x) {
+			if(d < 0) d += 2*x + 3;
+			else {
+				d += 2 * (x - y) + 5;
+				y--;
+			}
+			x++;
+			this.drawSymmetricCirclePoint(xc, yc, x, y, color);
+ 		}
+	}
+	
+	//Center Based
+	public void fillCircle(float x0, float y0, float r, int color) {
+		int xc = (int) x0, yc = (int) y0;
+		int x = 0;
+		int y = (int) r;
+		int d = (int) (1 - r);
+		for (int i = 0; i < y; i++) {
+			this.drawSymmetricCirclePoint(xc, yc, x, i, color);
+		}
+		
+		while(y > x) {
+			if(d < 0) d += 2*x + 3;
+			else {
+				d += 2 * (x - y) + 5;
+				y--;
+			}
+			x++;
+			for (int i = 0; i < y; i++) {
+				this.drawSymmetricCirclePoint(xc, yc, x, i, color);
+			}
+ 		}
 	}
 	
 	public BufferedImage getImage() {

@@ -31,7 +31,7 @@ public class Breakout implements IGameLogic {
 	
 	private int gameState = 0;
 	private boolean paused = false;
-	private int brickCount;
+	private int brickCount = 0;
 	
 	public static void main(String[] args) {
 		
@@ -116,6 +116,7 @@ public class Breakout implements IGameLogic {
 			
 			
 			//Ball Death
+			System.out.println(this.brickCount);
 			for(Ball bl : this.balls) {
 				if(bl.isOffBottomEdge() && bl.isAlive()) {
 					if(this.aliveBalls == 1) {
@@ -171,8 +172,11 @@ public class Breakout implements IGameLogic {
 	
 	public void newLevel() {
 		this.aliveBalls = 1;
-		this.bricks = Brick.generate(5, 10);
-		this.brickCount = 5 * 10;
+		this.brickCount = 0;
+		this.bricks = Brick.generate(5, 10, Math.random()/2);
+		for (Brick b: this.bricks) {
+			if(b.isAlive()) this.brickCount++;
+		}
 		this.balls = new Ball[1];
 		this.balls[0] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white);
 		this.balls[0].init();
@@ -194,15 +198,20 @@ public class Breakout implements IGameLogic {
 			this.paddle.setActiveSpeed(Paddle.fastSpeed);
 			this.paddle.setPowerUpTimer(4);
 		} else if(type == 2) {
-			this.aliveBalls = 10;
-			Ball bl = this.balls[0];
-			this.balls = new Ball[10];
-			this.balls[0] = bl;
-			for (int i = 1; i < 10; i++) {
-				this.balls[i] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white);
-				this.balls[i].init();
-				this.balls[i].setX((float) Math.random() * (GameEngine.displayWidth - 50) + 25); 
+			Ball[] newBalls = new Ball[10];
+			for (int i = 0, j = 0; i < this.aliveBalls; j++) {
+				if(this.balls[j].isAlive()) {
+					newBalls[i] = this.balls[j];
+					i++;
+				}
 			}
+			for (int i = this.aliveBalls; i < 10; i++) {
+				newBalls[i] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white);
+				newBalls[i].init();
+				newBalls[i].setX((float) Math.random() * (GameEngine.displayWidth - 50) + 25);
+			}
+			this.balls = newBalls;
+			this.aliveBalls = 10;
 		}
 	}
 }

@@ -24,7 +24,7 @@ public class CubeScene implements IGameLogic {
 	
 	public static void main(String[] args) {
 		CubeScene cs = new CubeScene();
-		GameEngine gameEngine = new GameEngine(60, 60, 3, cs, 800, 600, "CubeScene", true);
+		GameEngine gameEngine = new GameEngine(60, 60, 3, cs, 800, 800, "CubeScene", true);
 	}
 	
 	@Override

@@ -14,19 +14,20 @@ public class Brick extends GameObject {
 	public static final int brickWidth = 80, brickHeight = 40;
 	private static final Color[] colors = {Color.red, Color.orange, Color.yellow, Color.cyan, Color.green};
 	
-	public Brick(int x, int y, int width, int height, int level) {
+	public Brick(int x, int y, int width, int height, int level, boolean alive) {
 		super(x, y, width, height, colors[level]);
 		this.id = 2;
 		this.level = level;
+		this.alive = alive;
 
 	}
 	
-	public static Brick[] generate(int rows, int cols) {
+	public static Brick[] generate(int rows, int cols, double random) {
 		Brick[] bricks = new Brick[rows * cols];
 		int gap = (GameEngine.displayWidth - cols*brickWidth)/(cols + 1);
 		for(int i = 0; i < cols; i++) {
 			for(int j = 0; j < rows; j++) {
-				bricks[i + j*cols] = new Brick(gap + i*(brickWidth + gap), gap + j*(brickHeight + gap), brickWidth, brickHeight, j);
+				bricks[i + j*cols] = new Brick(gap + i*(brickWidth + gap), gap + j*(brickHeight + gap), brickWidth, brickHeight, j, Math.random() > random);
 			}
 		}
 		return bricks;
