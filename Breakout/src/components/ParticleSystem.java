@@ -108,6 +108,13 @@ public class ParticleSystem {
 		}
 	}
 	
+	public void clear() {
+		for (int i = 0; i < this.particleCount; i++) {
+			this.particlePool[i].life = 0;
+		}
+		this.particleCount = 0;
+	}
+	
 	public void update(double deltaTime) {
 		for (int i = 0; i < this.particleCount; i++) {
 			if(this.particlePool[i].life <= 0) {

@@ -6,18 +6,18 @@ import javax.sound.sampled.FloatControl;
 import gameEngine.Sound;
 
 public enum BreakoutSound {
-	BACKGROUND("sounds/background.wav"),
-	EXPLOSION("sounds/explosion.wav"),
-	HIT("sounds/hit.wav"),
-	GAMEOVER("sounds/gameover.wav"),
-	POWERUP("sounds/powerup.wav");
+	BACKGROUND("../sounds/background.wav"),
+	EXPLOSION("../sounds/explosion.wav"),
+	HIT("../sounds/hit.wav"),
+	GAMEOVER("../sounds/gameover.wav"),
+	POWERUP("../sounds/powerup.wav");
 	
 	private Clip clip;
 	private FloatControl gainControl;
 	
 	BreakoutSound(String fileName) {
 		try {
-			this.clip = Sound.generateClip(fileName);
+			this.clip = Sound.generateClip(this.getClass().getResource(fileName));
 			this.gainControl = Sound.getFloatControl(clip);
 		} catch (Exception e) {
 			e.printStackTrace();

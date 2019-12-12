@@ -46,10 +46,20 @@ public class PackedColor {
 		return new Vec4(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 	
+	//h0 - h1 []0 - 360] s0 - s1 [0-100] b0 - b1 [0-100]
+	public static int randomHSB(int h0, int h1, int s0, int s1, int b0, int b1) {
+		h0 = Maths.clamp(h0, 0, 360);
+		h1 = Maths.clamp(h1, 0, 360);
+		s0 = Maths.clamp(s0, 0, 100);
+		s1 = Maths.clamp(s1, 0, 100);
+		b0 = Maths.clamp(b0, 0, 100);
+		b1 = Maths.clamp(b1, 0, 100);
+		float h = (float) (h0 + Math.random() * (h1 - h0))/360;
+		float s = (float) (s0 + Math.random() * (s1 - s0))/100;
+		float b = (float) (b0 + Math.random() * (b1 - b0))/100;
+		return Color.HSBtoRGB(h, s, b);
 	
-	
-	
-	
+	}
 	
 	
 	

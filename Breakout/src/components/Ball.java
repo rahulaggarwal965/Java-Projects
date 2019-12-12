@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import breakout.BreakoutSound;
 import gameEngine.GameEngine;
 import libraries.Maths;
+import threeDimensions.PackedColor;
 import threeDimensions.Vec2;
 
 public class Ball extends GameObject {
@@ -29,10 +30,11 @@ public class Ball extends GameObject {
 		this.position.x = GameEngine.displayWidth/2;
 		this.position.y = 650;
 		this.setVelocity((float) (Math.random() * Math.PI/2 + Math.PI/4), initialSpeed);
-		this.trailColor = new Color(Color.HSBtoRGB(
+		this.trailColor = new Color(PackedColor.randomHSB(0, 360, 80, 85, 85, 95));
+		/*this.trailColor = new Color(Color.HSBtoRGB(
 						(float) Math.random(),
 						0.8f + (float) (Math.random() * 0.05),
-						0.85f + (float) (Math.random() * 0.1)));
+						0.85f + (float) (Math.random() * 0.1)));*/
 	}
 
 	@Override

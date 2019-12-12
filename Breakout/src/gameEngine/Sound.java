@@ -1,6 +1,6 @@
 package gameEngine;
 
-import java.io.File;
+import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -9,15 +9,14 @@ import javax.sound.sampled.FloatControl;
 
 public class Sound {
 	
-	public static Clip generateClip(String fileName) throws Exception {
-		File soundFile = new File(fileName).getAbsoluteFile();
-		AudioInputStream audio = AudioSystem.getAudioInputStream(soundFile);
+	public static Clip generateClip(URL url) throws Exception {
+		AudioInputStream audio = AudioSystem.getAudioInputStream(url);
 		Clip clip = AudioSystem.getClip();
 		clip.open(audio);
 		return clip;
 	}
 	
-	public static FloatControl getFloatControl(Clip clip) throws Exception {
+	public static FloatControl getFloatControl(Clip clip) {
 		if(clip.isControlSupported(FloatControl.Type.MASTER_GAIN))
 			return (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		else return null;

@@ -180,39 +180,36 @@ public class Breakout implements IGameLogic {
 	public void newLevel() {
 		this.aliveBalls = 1;
 		this.brickCount = 0;
+		ps.clear();
 		
 		//Any Hue, High Saturation (75-100), Low Brightness (0 - 30)
-		this.backgroundColor = new Color(Color.HSBtoRGB((float) Math.random(), 1 - (float) (Math.random() * 0.25), (float) (Math.random() * 0.3)));
+		this.backgroundColor = new Color(PackedColor.randomHSB(0, 360, 75, 100, 0, 30));
 		
+		//Generate Level
 		Random rand = new Random();
 		int rows = 5 + rand.nextInt(6);
 		int cols = 8 + rand.nextInt(8);
 		this.bricks = Brick.generate(rows, cols, Math.random()/2);
+		
+		//Set BrickCount
 		for (Brick b: this.bricks) {
 			if(b.isAlive()) this.brickCount++;
 		}
+		
+		//Make Ball
 		this.balls = new Ball[1];
 		this.balls[0] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white, this.ps);
 		this.balls[0].init();
 	}
-
-	public int getBrickCount() {
-		return brickCount;
-	}
-
-	public void setBrickCount(int brickCount) {
-		this.brickCount = brickCount;
-	}
-	
 	
 	public void handlePowerUp(int type) {
-		if(type == 0) {
+		if(type == 0) { //Paddle Width
 			this.paddle.setWidth(this.paddle.getWidth() * 2);
 			this.paddle.setPowerUpTimer(4);
-		} else if(type == 1) {
+		} else if(type == 1) { //Paddle Speed
 			this.paddle.setActiveSpeed(Paddle.fastSpeed);
 			this.paddle.setPowerUpTimer(4);
-		} else if(type == 2) {
+		} else if(type == 2) { //Multiple Balls
 			Ball[] newBalls = new Ball[10];
 			for (int i = 0, j = 0; i < this.aliveBalls; j++) {
 				if(this.balls[j].isAlive()) {
@@ -227,7 +224,7 @@ public class Breakout implements IGameLogic {
 			}
 			this.balls = newBalls;
 			this.aliveBalls = 10;
-		} else if(type == 3) {
+		} else if(type == 3) { //Piercing Ball
 			for (int i = 0; i < this.balls.length; i++) {
 				if(this.balls[i].isAlive()) {
 					this.balls[i].setPiercingTime(3.0);
@@ -235,7 +232,15 @@ public class Breakout implements IGameLogic {
 			}
 		}
 	}
+	
+	public int getBrickCount() {
+		return brickCount;
+	}
 
+	public void setBrickCount(int brickCount) {
+		this.brickCount = brickCount;
+	}
+	
 	public int getScore() {
 		return score;
 	}
