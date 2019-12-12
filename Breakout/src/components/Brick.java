@@ -44,11 +44,11 @@ public class Brick extends GameObject {
 						0.85f + (float) (Math.random() * 0.1))));
 		Vec4 deltaColor = endColor._subtract(initialColor)._divide(rows);
 		
-		int brickWidth = (int) ((double) GameEngine.displayWidth - (cols - 1) * GAP)/cols;
-		int brickHeight = (int) ((double) 200 - (rows - 1) * GAP)/rows;
+		int brickWidth = (GameEngine.displayWidth - (cols - 1) * GAP)/cols;
+		int brickHeight = (300 - (rows - 1) * GAP)/rows;
 		for (int j = 0; j < rows; j++) {
 			for (int i = 0; i < cols; i++) {
-				bricks[i + j*cols] = new Brick(i*(brickWidth + GAP), j*(brickHeight + GAP), brickWidth, brickHeight, new Color(PackedColor.makeRGBA(initialColor)), j, Math.random() > random);
+				bricks[i + j*cols] = new Brick(i*(brickWidth + GAP), j*(brickHeight + GAP), brickWidth, brickHeight, new Color(PackedColor.makeRGBA(initialColor)), rows - 1 - j, Math.random() > random);
 			}
 			initialColor.add(deltaColor);
 		}

@@ -16,14 +16,19 @@ public class BreakoutGUI {
 		
 	}
 	
-	public void render(int gameState, Graphics2D g2d) {
+	public void render(int gameState, int score, Graphics2D g2d) {
 		if(gameState == 0) {
 			drawCenteredString(g2d, "Breakout", titleFont, GameEngine.displayWidth/2, 80);
 			drawCenteredString(g2d, "Rahul Aggarwal", labelFont, GameEngine.displayWidth/2, 150);
 			drawCenteredString(g2d, "Press Enter or Click to Play", labelFont, GameEngine.displayWidth/2, 680);
 			drawCenteredString(g2d, "Use WASD to move the paddle", labelFont, GameEngine.displayWidth/2, 720);
-		} else if(gameState == 2) {
+		} else if(gameState == 1) {
+			g2d.setFont(labelFont);
+			g2d.setColor(Color.white);
+			g2d.drawString("Score: " + String.valueOf(score), 20, 780);
+ 		} else if(gameState == 2) {
 			drawCenteredString(g2d, "You Lose", titleFont, GameEngine.displayWidth/2, 80);
+			drawCenteredString(g2d, "Your Score was: " + String.valueOf(score), labelFont, GameEngine.displayWidth/2, 350);
 			drawCenteredString(g2d, "Press Enter or Click to Play Again", labelFont, GameEngine.displayWidth/2, 680);
 		}
 	}

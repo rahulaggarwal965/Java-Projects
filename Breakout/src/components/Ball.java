@@ -15,11 +15,12 @@ public class Ball extends GameObject {
 	private boolean alive = true;
 	private ParticleSystem ps;
 	private Color trailColor = Color.cyan;
+	private double piercingTime = 0.0;
 
-	public Ball(float x, float y, float width, float height, Color col) {
+	public Ball(float x, float y, float width, float height, Color col, ParticleSystem ps) {
 		super(x, y, width, height, col);
 		this.id = 1;
-		this.ps = new ParticleSystem(128);
+		this.ps = ps;
 		this.previousPosition = new Vec2(0, 0);
 	}
 	
@@ -43,7 +44,12 @@ public class Ball extends GameObject {
 	@Override
 	public void update(double deltaTime) {
 		if(this.alive) {
-			this.ps.addParticle(this.previousPosition, this.size, (float) (this.angle - Math.PI + Maths.randomBilateral() * 0.5), 40.0f, 0, 0, 0.6f, this.trailColor, new Color(this.trailColor.getRed(), this.trailColor.getGreen(), this.trailColor.getBlue(), 0), 1);
+			if(this.piercingTime > 0) {
+				piercingTime -= deltaTime;
+				this.ps.addParticle(this.previousPosition, this.size, (float) (this.angle - Math.PI + Maths.randomBilateral() * 0.5), 40.0f, 0, 0, 0.6f, Color.red, new Color(0xffff0000, true), 1);
+			} else {
+				this.ps.addParticle(this.previousPosition, this.size, (float) (this.angle - Math.PI + Maths.randomBilateral() * 0.5), 40.0f, 0, 0, 0.6f, this.trailColor, new Color(this.trailColor.getRed(), this.trailColor.getGreen(), this.trailColor.getBlue(), 0), 1);
+			}
 			this.previousPosition.copy(this.position);
 			super.update(deltaTime);
 			if(this.position.y <= 0) {
@@ -58,7 +64,6 @@ public class Ball extends GameObject {
 				this.setAngle((float) Math.PI - this.angle);
 				BreakoutSound.HIT.play(false);
 			}
-			this.ps.update(deltaTime);
 		}
 	}
 
@@ -66,8 +71,11 @@ public class Ball extends GameObject {
 	public void render(Graphics2D g2d) {
 		// TODO Auto-generated method stub
 		if(this.alive) {
-			this.ps.render(g2d);
-			g2d.setColor(this.c);
+			if(this.piercingTime > 0) {
+				g2d.setColor(Color.red);
+			} else {
+				g2d.setColor(this.c);
+			}
 			g2d.fillOval((int) this.position.x, (int) this.position.y, (int) this.size.x, (int) this.size.y);
 		}
 	}
@@ -88,4 +96,11 @@ public class Ball extends GameObject {
 		this.alive = alive;
 	}
 
+	public void setPiercingTime(double time) {
+		this.piercingTime = time;
+	}
+	
+	public double getPiercingTime() {
+		return this.piercingTime;
+	}
 }

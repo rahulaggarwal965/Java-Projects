@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 import components.Ball;
 import components.Brick;
@@ -32,6 +33,7 @@ public class Breakout implements IGameLogic {
 	private int gameState = 0;
 	private boolean paused = false;
 	private int brickCount = 0;
+	private int score = 0;
 	
 	private Color backgroundColor = Color.black;
 	
@@ -55,7 +57,7 @@ public class Breakout implements IGameLogic {
 		this.paddle = new Paddle(400, 760, Paddle.initialWidth, 15, Color.white);
 		
 		//Create the Game Components
-		this.ps = new ParticleSystem(1000);
+		this.ps = new ParticleSystem(3000);
 		this.cr = new CollisionResolver(this, ps);
 		this.gui = new BreakoutGUI();
 		this.pus = new PowerUpSystem();
@@ -71,6 +73,7 @@ public class Breakout implements IGameLogic {
 				
 				//Setup new game
 				this.newLevel();
+				this.score = 0;
 				paddle.init();
 				gameState = 1;
 			}
@@ -135,7 +138,7 @@ public class Breakout implements IGameLogic {
 				}
 			}
 			
-			if(this.brickCount == 0) this.newLevel();
+			if(this.brickCount <= 0) this.newLevel();
 			
 		}
 	}
@@ -148,7 +151,7 @@ public class Breakout implements IGameLogic {
 		g2d.clearRect(0, 0, GameEngine.displayWidth, GameEngine.displayHeight);
 		
 		//Render GUI elements
-		this.gui.render(this.gameState, g2d);
+		this.gui.render(this.gameState, this.score, g2d);
 
 		//Render GameObjects
 		if(gameState == 1) {
@@ -180,12 +183,16 @@ public class Breakout implements IGameLogic {
 		
 		//Any Hue, High Saturation (75-100), Low Brightness (0 - 30)
 		this.backgroundColor = new Color(Color.HSBtoRGB((float) Math.random(), 1 - (float) (Math.random() * 0.25), (float) (Math.random() * 0.3)));
-		this.bricks = Brick.generate(5, 10, Math.random()/2);
+		
+		Random rand = new Random();
+		int rows = 5 + rand.nextInt(6);
+		int cols = 8 + rand.nextInt(8);
+		this.bricks = Brick.generate(rows, cols, Math.random()/2);
 		for (Brick b: this.bricks) {
 			if(b.isAlive()) this.brickCount++;
 		}
 		this.balls = new Ball[1];
-		this.balls[0] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white);
+		this.balls[0] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white, this.ps);
 		this.balls[0].init();
 	}
 
@@ -196,6 +203,7 @@ public class Breakout implements IGameLogic {
 	public void setBrickCount(int brickCount) {
 		this.brickCount = brickCount;
 	}
+	
 	
 	public void handlePowerUp(int type) {
 		if(type == 0) {
@@ -213,12 +221,26 @@ public class Breakout implements IGameLogic {
 				}
 			}
 			for (int i = this.aliveBalls; i < 10; i++) {
-				newBalls[i] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white);
+				newBalls[i] = new Ball(GameEngine.displayWidth/2, 650, 15, 15, Color.white, this.ps);
 				newBalls[i].init();
 				newBalls[i].setX((float) Math.random() * (GameEngine.displayWidth - 50) + 25);
 			}
 			this.balls = newBalls;
 			this.aliveBalls = 10;
+		} else if(type == 3) {
+			for (int i = 0; i < this.balls.length; i++) {
+				if(this.balls[i].isAlive()) {
+					this.balls[i].setPiercingTime(3.0);
+				}
+			}
 		}
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 }

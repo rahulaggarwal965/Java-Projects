@@ -34,25 +34,28 @@ public class CollisionResolver {
 			//Handle Brick Death and Brick Count
 			br.setAlive(false);
 			this.b.setBrickCount(this.b.getBrickCount() - 1);
+			this.b.setScore(this.b.getScore() + 100 * (br.getLevel() + 1));
 			
 			
 			//Change Ball Speed based on Brick Level
-			bl.setSpeed(Ball.initialSpeed * (-0.25f* br.getLevel() + 2));
+			bl.setSpeed(Ball.initialSpeed * (0.2f* br.getLevel() + 1));
 			
 			//Create a Particle Explosion and Fade Brick and Firework thing
 			ps.createExplosion(br.position, br.size, br.c);
 			
-			//Test Collision Side
-			Vec2 ballPrevPosition = bl.getPreviousPosition();
-			
-			if(ballPrevPosition.y + bl.size.y < br.position.y || ballPrevPosition.y > br.position.y + br.size.y) {
-				bl.position.copy(ballPrevPosition);
-				bl.updateHitbox();	
-				bl.setAngle(-bl.angle); // Top or Bottom
-			} else {
-				bl.position.copy(ballPrevPosition);
-				bl.updateHitbox();
-				bl.setAngle((float) Math.PI - bl.angle); // Left or Right
+			if(bl.getPiercingTime() <= 0) {
+				//Test Collision Side
+				Vec2 ballPrevPosition = bl.getPreviousPosition();
+				
+				if(ballPrevPosition.y + bl.size.y < br.position.y || ballPrevPosition.y > br.position.y + br.size.y) {
+					bl.position.copy(ballPrevPosition);
+					bl.updateHitbox();	
+					bl.setAngle(-bl.angle); // Top or Bottom
+				} else {
+					bl.position.copy(ballPrevPosition);
+					bl.updateHitbox();
+					bl.setAngle((float) Math.PI - bl.angle); // Left or Right
+				}
 			}
 		}
 	}

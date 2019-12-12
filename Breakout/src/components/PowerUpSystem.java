@@ -28,7 +28,7 @@ public class PowerUpSystem {
 				20, 20,	
 				(float) (Math.random() * -Math.PI/2 - Math.PI/4),
 				PowerUp.SPEED,
-				rand.nextInt(3),
+				rand.nextInt(4),
 				(float) Math.random() * 5 + 3);
 	}
 	
