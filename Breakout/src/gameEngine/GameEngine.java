@@ -174,21 +174,21 @@ public class GameEngine extends Canvas implements Runnable {
 	}
 	
 	protected void render() {
-		Graphics g = this.strategy.getDrawGraphics();
+		Graphics2D g2d = (Graphics2D) this.strategy.getDrawGraphics();
 		
 		if(this.threeDimensional) {
 			Graphics3D g3d = new Graphics3D(); //Might make this persistent
 			g3d.clear(PackedColor.Black);
 			this.gameLogic.render3D(g3d);
-			g.drawImage(g3d.getImage(), 0, 0, null);
+			g2d.drawImage(g3d.getImage(), 0, 0, null);
 		} else {
-			g.setColor(Color.black);
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			g2d.setBackground(Color.black);
+			g2d.clearRect(0, 0, this.getWidth(), this.getHeight());
 		}
 		
-		this.gameLogic.render((Graphics2D) g);
+		this.gameLogic.render(g2d);
 		
-		g.dispose();
+		g2d.dispose();
 		this.strategy.show();
 	}
 

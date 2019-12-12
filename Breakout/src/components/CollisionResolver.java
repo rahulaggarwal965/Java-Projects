@@ -39,8 +39,8 @@ public class CollisionResolver {
 			//Change Ball Speed based on Brick Level
 			bl.setSpeed(Ball.initialSpeed * (-0.25f* br.getLevel() + 2));
 			
-			//Create a Particle Explosion
-			ps.createExplosion(br.position.x, br.position.y, br.c);
+			//Create a Particle Explosion and Fade Brick and Firework thing
+			ps.createExplosion(br.position, br.size, br.c);
 			
 			//Test Collision Side
 			Vec2 ballPrevPosition = bl.getPreviousPosition();

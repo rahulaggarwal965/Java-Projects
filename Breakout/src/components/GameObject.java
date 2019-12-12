@@ -29,6 +29,7 @@ public abstract class GameObject {
 		this.position = new Vec2(x, y);
 		this.size = new Vec2(width, height);
 		this.velocity = new Vec2(0, 0);
+		this.acceleration = new Vec2(0, 0);
 		this.hitbox = new Rectangle((int) x, (int) y, (int) width, (int) height);
 		this.c = c;
 	}

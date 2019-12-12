@@ -33,6 +33,8 @@ public class Breakout implements IGameLogic {
 	private boolean paused = false;
 	private int brickCount = 0;
 	
+	private Color backgroundColor = Color.black;
+	
 	public static void main(String[] args) {
 		
 		Breakout breakout = new Breakout();
@@ -116,7 +118,6 @@ public class Breakout implements IGameLogic {
 			
 			
 			//Ball Death
-			System.out.println(this.brickCount);
 			for(Ball bl : this.balls) {
 				if(bl.isOffBottomEdge() && bl.isAlive()) {
 					if(this.aliveBalls == 1) {
@@ -142,6 +143,9 @@ public class Breakout implements IGameLogic {
 	@Override
 	public void render(Graphics2D g2d) {
 		// TODO Auto-generated method stub
+		
+		g2d.setBackground(backgroundColor);
+		g2d.clearRect(0, 0, GameEngine.displayWidth, GameEngine.displayHeight);
 		
 		//Render GUI elements
 		this.gui.render(this.gameState, g2d);
@@ -173,6 +177,9 @@ public class Breakout implements IGameLogic {
 	public void newLevel() {
 		this.aliveBalls = 1;
 		this.brickCount = 0;
+		
+		//Any Hue, High Saturation (75-100), Low Brightness (0 - 30)
+		this.backgroundColor = new Color(Color.HSBtoRGB((float) Math.random(), 1 - (float) (Math.random() * 0.25), (float) (Math.random() * 0.3)));
 		this.bricks = Brick.generate(5, 10, Math.random()/2);
 		for (Brick b: this.bricks) {
 			if(b.isAlive()) this.brickCount++;
