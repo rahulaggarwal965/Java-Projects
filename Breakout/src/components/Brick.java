@@ -32,16 +32,10 @@ public class Brick extends GameObject {
 		Random rand = new Random();
 		
 		//Creating a random gradient (need to optimize all this color sh*t)
-		float hue = (float) Math.random();
-		Vec4 initialColor = PackedColor.toVector(new Color(
-				Color.HSBtoRGB(
-						hue,
-						0.8f + (float) (Math.random() * 0.05),
-						0.85f + (float) (Math.random() * 0.1))));
-		Vec4 endColor = PackedColor.toVector(new Color(
-				Color.HSBtoRGB(hue + ((float) rand.nextInt(2) * 2 - 1)*0.2f + (float) (Maths.randomBilateral() * 0.02), 
-						0.5f + (float) (Math.random() * 0.05), 
-						0.85f + (float) (Math.random() * 0.1))));
+		int startHue = rand.nextInt(361);
+		int endHue = startHue + (rand.nextInt(2) * 2 - 1)*72 + (int) (Maths.randomBilateral() * 8);
+		Vec4 initialColor = PackedColor.toVector(new Color(PackedColor.randomHSB(startHue, startHue, 80, 85, 85, 95)));
+		Vec4 endColor = PackedColor.toVector(new Color(PackedColor.randomHSB(endHue, endHue, 50, 55, 85, 95)));
 		Vec4 deltaColor = endColor._subtract(initialColor)._divide(rows);
 		
 		int brickWidth = (GameEngine.displayWidth - (cols - 1) * GAP)/cols;
