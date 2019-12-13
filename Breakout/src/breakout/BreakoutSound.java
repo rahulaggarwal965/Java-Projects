@@ -6,11 +6,11 @@ import javax.sound.sampled.FloatControl;
 import gameEngine.Sound;
 
 public enum BreakoutSound {
-	BACKGROUND("../sounds/background.wav"),
-	EXPLOSION("../sounds/explosion.wav"),
-	HIT("../sounds/hit.wav"),
-	GAMEOVER("../sounds/gameover.wav"),
-	POWERUP("../sounds/powerup.wav");
+	BACKGROUND("sounds/background.wav"),
+	EXPLOSION("sounds/explosion.wav"),
+	HIT("sounds/hit.wav"),
+	GAMEOVER("sounds/gameover.wav"),
+	POWERUP("sounds/powerup.wav");
 	
 	private Clip clip;
 	private FloatControl gainControl;
