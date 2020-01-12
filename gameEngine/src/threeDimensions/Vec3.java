@@ -169,5 +169,9 @@ public class Vec3 extends Vec2 {
 	public Vec3 interpolateTo(Vec3 dest, float alpha) {
 		return this._add(dest._subtract(this)._multiply(alpha));
 	}
+	
+	public void print() {
+		System.out.printf("x: %f, y: %f, z: %f\n", this.x, this.y, this.z);
+	}
 
 }

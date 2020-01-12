@@ -13,7 +13,7 @@ public class FragmentShader {
 		this.tYClamp = tHeight - 1.0f;
 	}
 	
-	public int shade(Vertex v) {
+	public int shade(VertexOut v) {
 		return texture.getPixel(
 				(int) Math.min(v.t.x * tWidth + 0.5f, tXClamp),
 				(int) Math.min(v.t.y * tHeight + 0.5f,  tYClamp));

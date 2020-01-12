@@ -22,29 +22,27 @@ public class GameEngine extends Canvas implements Runnable {
 	public static int displayWidth, displayHeight;
 	
 	private int fps, ups;
-	private boolean threeDimensional;
 	
 	public static Keyboard keyboard;
 	public static Mouse mouse;
 	
 	private JFrame window;
-	
+	private Graphics3D g3d;
 	private int numBuffers;
 	private BufferStrategy strategy;
 	private Timer timer;
-	private IGameLogic gameLogic;
+	private GameLogic gameLogic;
 	
-	public GameEngine(int fps, int ups, int numBuffers, IGameLogic gameLogic, int width, int height, String title, boolean threeDimensional) {
+	public GameEngine(int fps, int ups, int numBuffers, GameLogic gameLogic, int width, int height, String title) {
 		
 		//Important Statics
-		displayWidth = width;
-		displayHeight = height;
+		GameEngine.displayWidth = width;
+		GameEngine.displayHeight = height;
 		
 		//User Set Variables
 		this.fps = fps;
 		this.ups = ups;
 		this.numBuffers = numBuffers;
-		this.threeDimensional = threeDimensional;
 		
 		//Input Handling
 		keyboard = new Keyboard();
@@ -53,9 +51,9 @@ public class GameEngine extends Canvas implements Runnable {
 		this.addMouseMotionListener(mouse);
 		this.addKeyListener(keyboard);
 		
-		//First Frame
-		this.setBackground(Color.black);
-	
+		//Create 3D Graphics Context
+		this.g3d = new Graphics3D();
+		
 		//Initialize Timer
 		this.timer = new Timer();
 		
@@ -75,8 +73,8 @@ public class GameEngine extends Canvas implements Runnable {
 		this.startThread();
 	}
 	
-	public GameEngine(IGameLogic gameLogic) {
-		this(60, 60, 3, gameLogic, 800, 800, "Default", false);
+	public GameEngine(GameLogic gameLogic) {
+		this(60, 60, 3, gameLogic, 800, 800, "Default");
 	}
 
 	private synchronized void startThread() {
@@ -89,7 +87,7 @@ public class GameEngine extends Canvas implements Runnable {
 		this.createBufferStrategy(this.numBuffers);
 		this.strategy = this.getBufferStrategy();
 		this.timer.init();
-		this.gameLogic.init(this.window.getGraphics());
+		this.gameLogic.init((Graphics2D) this.window.getGraphics());
 	}
 	
 	private void sync() {
@@ -102,6 +100,7 @@ public class GameEngine extends Canvas implements Runnable {
 		}
 	}
 	
+	//Fixed Time Step TODO: consider changing to deltaTime
 	private void loop() {
 		float elapsedTime;
 		float accumulator = 0f;
@@ -122,13 +121,40 @@ public class GameEngine extends Canvas implements Runnable {
 			this.sync();
 		}
 	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		try {
+			this.init();
+			this.loop();
+		} catch (Exception e) {e.printStackTrace();}
+	}
 	
+	protected void input() {
+		this.gameLogic.input();
+	}
+	
+	protected void update(float deltaTime) {
+		this.gameLogic.update(deltaTime);
+	}
+	
+	protected void render() {
+		Graphics2D g2d = (Graphics2D) this.strategy.getDrawGraphics();
+		
+		this.g3d.clear(PackedColor.Black);
+		this.gameLogic.render(g3d);
+		g2d.drawImage(this.g3d.getImage(), 0, 0, null);
+		this.gameLogic.render(g2d);
+		
+		g2d.dispose();
+		this.strategy.show();
+	}
+
 	public static Texture loadImage(String filepath) {
 		BufferedImage img = null;
 		try {
-
 			img = ImageIO.read(new File(filepath));
-			System.out.println(BufferedImage.TYPE_3BYTE_BGR);
 
 		} catch (IOException e) {
 			System.out.println(e);
@@ -155,43 +181,5 @@ public class GameEngine extends Canvas implements Runnable {
 		}
 		return new Texture(pixels, img.getWidth(), img.getHeight());
 	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		try {
-			this.init();
-			this.loop();
-		} catch (Exception e) {e.printStackTrace();}
-	}
-	
-	protected void input() {
-		this.gameLogic.input();
-	}
-	
-	protected void update(float interval) {
-		this.gameLogic.update(interval);
-	}
-	
-	protected void render() {
-		Graphics g = this.strategy.getDrawGraphics();
-		
-		if(this.threeDimensional) {
-			Graphics3D g3d = new Graphics3D(); //Might make this persistent
-			g3d.clear(PackedColor.Black);
-			this.gameLogic.render3D(g3d);
-			g.drawImage(g3d.getImage(), 0, 0, null);
-		} else {
-			g.setColor(Color.black);
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		}
-		
-		this.gameLogic.render((Graphics2D) g);
-		
-		g.dispose();
-		this.strategy.show();
-	}
-
-	
 	
 }

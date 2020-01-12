@@ -1,7 +1,6 @@
 package breakout;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -13,12 +12,11 @@ import components.Paddle;
 import components.ParticleSystem;
 import components.PowerUpSystem;
 import gameEngine.GameEngine;
-import gameEngine.IGameLogic;
-import libraries.Noise;
+import gameEngine.GameLogic;
 import threeDimensions.Graphics3D;
 import threeDimensions.PackedColor;
 
-public class Breakout implements IGameLogic {
+public class Breakout implements GameLogic {
 	
 	private ParticleSystem ps;
 	private CollisionResolver cr;
@@ -40,11 +38,11 @@ public class Breakout implements IGameLogic {
 	public static void main(String[] args) {
 		
 		Breakout breakout = new Breakout();
-		GameEngine gameEngine = new GameEngine(60, 60, 3, breakout, 800, 800, "Breakout", true);
+		GameEngine gameEngine = new GameEngine(60, 60, 3, breakout, 800, 800, "Breakout");
 	}
 
 	@Override
-	public void init(Graphics g) throws Exception {
+	public void init(Graphics2D g) throws Exception {
 		// TODO Auto-generated method stub
 		
 		
@@ -93,21 +91,21 @@ public class Breakout implements IGameLogic {
 	}
 
 	@Override
-	public void update(float interval) {
+	public void update(float deltaTime) {
 		// TODO Auto-generated method stub
 		if(gameState == 1 && !paused) {
 			
 			//Updating GameObjects
-			this.paddle.update(interval);
+			this.paddle.update(deltaTime);
 			for(Ball bl: this.balls) {
-				bl.update(interval);
+				bl.update(deltaTime);
 			}
 			
 			//Updating Particles
-			ps.update(interval);
+			ps.update(deltaTime);
 			
 			//Update PowerUpSystem
-			pus.update(interval);
+			pus.update(deltaTime);
 			
 			//Resolve All Collisions
 			for (Ball bl : this.balls) {
@@ -144,36 +142,36 @@ public class Breakout implements IGameLogic {
 	}
 
 	@Override
-	public void render(Graphics2D g2d) {
+	public void render(Graphics2D g) {
 		// TODO Auto-generated method stub
 		
-		g2d.setBackground(backgroundColor);
-		g2d.clearRect(0, 0, GameEngine.displayWidth, GameEngine.displayHeight);
+		g.setBackground(backgroundColor);
+		g.clearRect(0, 0, GameEngine.displayWidth, GameEngine.displayHeight);
 		
 		//Render GUI elements
-		this.gui.render(this.gameState, this.score, g2d);
+		this.gui.render(this.gameState, this.score, g);
 
 		//Render GameObjects
 		if(gameState == 1) {
 			
 			//Render Particles
-			ps.render(g2d);
+			ps.render(g);
 			
 			for (Brick b : this.bricks) {
-				b.render(g2d);
+				b.render(g);
 			}
-			this.paddle.render(g2d);
+			this.paddle.render(g);
 			for (Ball bl : this.balls) {
-				bl.render(g2d);
+				bl.render(g);
 			}
 			
 			//Render PowerUps
-			pus.render(g2d);
+			pus.render(g);
 		}
 	}
 
 	@Override
-	public void render3D(Graphics3D g3d) {
+	public void render(Graphics3D g) {
 		
 	}
 	

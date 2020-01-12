@@ -13,6 +13,11 @@ public class Vec2 {
 		this.y = v.y;
 	}
 	
+	public void copy(Vec2 v) {
+		this.x = v.x;
+		this.y = v.y;
+	}
+	
 	public void abs() {
 		this.x = Math.abs(this.x);
 		this.y = Math.abs(this.y);
@@ -148,5 +153,9 @@ public class Vec2 {
 	
 	public Vec2 interpolateTo(Vec2 dest, float alpha) {
 		return this._add(dest._subtract(this)._multiply(alpha));
+	}
+	
+	public void print() {
+		System.out.printf("x: %f, y: %f\n", this.x, this.y);
 	}
 }

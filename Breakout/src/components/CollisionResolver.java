@@ -2,7 +2,7 @@ package components;
 
 import breakout.Breakout;
 import breakout.BreakoutSound;
-import libraries.Maths;
+import math.Maths;
 import threeDimensions.Vec2;
 
 public class CollisionResolver {

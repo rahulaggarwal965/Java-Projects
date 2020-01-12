@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 
 import breakout.BreakoutSound;
 import gameEngine.GameEngine;
-import libraries.Maths;
+import math.Maths;
 import threeDimensions.PackedColor;
 import threeDimensions.Vec2;
 

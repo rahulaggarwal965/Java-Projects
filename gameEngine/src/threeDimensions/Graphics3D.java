@@ -19,9 +19,15 @@ public class Graphics3D {
 			this.pixels[i] = color;
 		}
 	}
-	
+
 	public void drawPixel(int x, int y, int color) {
 		this.pixels[y * GameEngine.displayWidth + x] = color;
+	}
+	
+	public void drawClippedPixel(int x, int y, int color) {
+		if(x >= 0 && x < GameEngine.displayWidth && y >= 0 && y <= GameEngine.displayHeight) {
+			this.pixels[y * GameEngine.displayWidth + x] = color;
+		}
 	}
 	
 	public void drawPixels(int[] pixels) {	
@@ -103,14 +109,14 @@ public class Graphics3D {
 	}
 	
 	private void drawSymmetricCirclePoint(int xc, int yc, int x, int y, int color) {
-		this.drawPixel(xc+x, yc+y, color);
-		this.drawPixel(xc-x, yc+y, color);
-		this.drawPixel(xc+x, yc-y, color);
-		this.drawPixel(xc-x, yc-y, color);
-		this.drawPixel(xc+y, yc+x, color);
-		this.drawPixel(xc-y, yc+x, color);
-		this.drawPixel(xc+y, yc-x, color);
-		this.drawPixel(xc-y, yc-x, color);
+		this.drawClippedPixel(xc+x, yc+y, color);
+		this.drawClippedPixel(xc-x, yc+y, color);
+		this.drawClippedPixel(xc+x, yc-y, color);
+		this.drawClippedPixel(xc-x, yc-y, color);
+		this.drawClippedPixel(xc+y, yc+x, color);
+		this.drawClippedPixel(xc-y, yc+x, color);
+		this.drawClippedPixel(xc+y, yc-x, color);
+		this.drawClippedPixel(xc-y, yc-x, color);
 	}
 	
 	//Center Based

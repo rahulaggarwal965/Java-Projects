@@ -1,12 +1,11 @@
 package components;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
 import gameEngine.GameEngine;
-import libraries.Maths;
+import math.Maths;
 import threeDimensions.PackedColor;
 import threeDimensions.Vec4;
 
@@ -16,8 +15,6 @@ public class Brick extends GameObject {
 	private boolean alive = true;
 	
 	private static final int GAP = 5;
-	//public static final int brickWidth = 80, brickHeight = 40;
-	//private static final Color[] colors = {Color.red, Color.orange, Color.yellow, Color.cyan, Color.green};
 	
 	public Brick(int x, int y, int width, int height, Color c, int level, boolean alive) {
 		super(x, y, width, height, c);
@@ -81,9 +78,6 @@ public class Brick extends GameObject {
 		if(this.alive) {
 			g2d.setColor(this.c);
 			g2d.fillRect((int) this.position.x, (int) this.position.y, (int) this.size.x, (int) this.size.y);
-			//g2d.setColor(Color.white);
-			//g2d.setStroke(new BasicStroke(2));
-			//g2d.drawRect((int) this.position.x, (int) this.position.y, (int) this.size.x, (int) this.size.y);
 		}
 	}
 

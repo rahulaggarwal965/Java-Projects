@@ -2,15 +2,24 @@ package threeDimensions;
 
 import java.util.ArrayList;
 
+import gameEngine.GameEngine;
+
 public class Pipeline {
 	
 	private Graphics3D g3d;
-	private Mat3 rotation;
-	private Vec3 translation;
 	private ScreenTransformer st;
 	private ZBuffer depthBuffer;
 	public FragmentShader fragShader;
 	
+	
+	//Transformation
+	private Matrix world = Matrix.Identity(4);
+	private Matrix projection = Matrix.Identity(4);
+	private Matrix view = Matrix.Identity(4);
+	private Matrix worldView = Matrix.Identity(4);
+	private Matrix worldViewProjection = Matrix.Identity(4);
+	
+
 	public Pipeline() {
 		st = new ScreenTransformer();
 		fragShader = new FragmentShader();
@@ -21,77 +30,143 @@ public class Pipeline {
 		depthBuffer.clear();
 	}
 	
+	public void setWorld(Matrix transformation) {
+		this.world = transformation;
+		this.worldView = this.view.multiply(this.world);
+		this.worldViewProjection = this.projection.multiply(this.worldView);
+	}
+	
+	public void setProjection(Matrix projection) {
+		this.projection = projection;
+		this.worldViewProjection = this.projection.multiply(this.worldView);
+	}
+	
+	public void setView(Matrix view) {
+		this.view = view;
+		this.worldView = this.view.multiply(this.world);
+		this.worldViewProjection = this.projection.multiply(this.worldView);
+	}
+	
 	public void draw(Graphics3D g3d, IndexedTriangleList<Vertex> triangleList) {
 		this.g3d = g3d;
 		processVertices(triangleList.vertices, triangleList.indices);
 	}
 	
-	public void setRotation(Mat3 rotation) {
-		this.rotation = rotation;
-	}
-	
-	public void setTranslation(Vec3 translation) {
-		this.translation = translation;
-	}
-	
-	//I use ArrayLists to prepare for infinite terrain
+	//I use ArrayLists to prepare for infinite terrain TODO: DO I really need?
 	private void processVertices(ArrayList<Vertex> vertices, ArrayList<Integer> indices) {
-		ArrayList<Vertex> vOut = new ArrayList<Vertex>(vertices.size());
+		ArrayList<VertexOut> vOut = new ArrayList<VertexOut>(vertices.size());
 		
 		for (Vertex v : vertices) {
-			vOut.add(new Vertex(rotation._multiply(v.pos)._add(translation), v.t ));
+			VertexOut vO = new VertexOut(this.worldViewProjection._multiply(new Vec4(v.pos)), v.t);
+			vOut.add(vO);
 		}
 		
 		assembleTriangles(vOut, indices);
 	}
 	
-	private void assembleTriangles(ArrayList<Vertex> vertices, ArrayList<Integer> indices) {
+	private void assembleTriangles(ArrayList<VertexOut> vertices, ArrayList<Integer> indices) {
+		final Vec4 eye = this.projection._multiply(new Vec4(0, 0, 0, 1));
 		for (int i = 0; i < indices.size() / 3; i++) {
-			Vertex v0 = vertices.get(indices.get(i*3));
-			Vertex v1 = vertices.get(indices.get(i*3 + 1));
-			Vertex v2 = vertices.get(indices.get(i*3 + 2));
+			VertexOut v0 = vertices.get(indices.get(i*3));
+			VertexOut v1 = vertices.get(indices.get(i*3 + 1));
+			VertexOut v2 = vertices.get(indices.get(i*3 + 2));
 			
 			//Backface Culling
-			if( (v1.pos._subtract(v0.pos).cross(v2.pos._subtract(v0.pos)).dot(v0.pos) <= 0.0f)) {
-				processTriangle(new Vertex(v0), new Vertex(v1), new Vertex(v2));
+			if( (v1.pos._subtract(v0.pos).cross(v2.pos._subtract(v0.pos)).dot(v0.pos._subtract(eye)) <= 0.0f)) {
+				processTriangle(new VertexOut(v0), new VertexOut(v1), new VertexOut(v2));
 			}
 		}
 	}
 	
-	private void processTriangle(Vertex v0, Vertex v1, Vertex v2) {
+	private void processTriangle(VertexOut v0, VertexOut v1, VertexOut v2) {
 		//Geometry Shader
 		
-		postProcessTriangleVertices(new Triangle<Vertex>(v0, v1, v2));
+		clipCullTriangle(new Triangle<VertexOut>(v0, v1, v2));
 	}
 	
-	private void postProcessTriangleVertices(Triangle<Vertex> triangle) {
-		st.transform(triangle.v0);
-		st.transform(triangle.v1);
-		st.transform(triangle.v2);
+	//Clipping Routines
+	public void clip1(VertexOut v0, VertexOut v1, VertexOut v2) {
+		final float aA = (-v0.pos.z) / (v1.pos.z - v0.pos.z);
+		final float aB = (-v0.pos.z) / (v2.pos.z - v0.pos.z);
 		
-		drawTriangle(triangle);
+		final VertexOut v0A = v0.interpolateTo(v1, aA);
+		final VertexOut v0B = v0.interpolateTo(v2, aB);
+		
+		
+		//Ugly but optimized for the least amount of copying
+		postProcessTriangleVertices(new Triangle<VertexOut>(new VertexOut(v0A), v1, new VertexOut(v2)));
+		postProcessTriangleVertices(new Triangle<VertexOut>(v0B, v0A, v2));
 	}
 	
-	private void drawTriangle(Triangle<Vertex> triangle) {
+	public void clip2(VertexOut v0, VertexOut v1, VertexOut v2) {
+		final float aA = (-v0.pos.z) / (v2.pos.z - v0.pos.z);
+		final float aB = (-v1.pos.z) / (v2.pos.z - v1.pos.z);
 		
-		Vertex v0 = triangle.v0;
-		Vertex v1 = triangle.v1;
-		Vertex v2 = triangle.v2;
+		v0 = v0.interpolateTo(v2, aA);
+		v1 = v1.interpolateTo(v2, aB);
+		
+		postProcessTriangleVertices(new Triangle<VertexOut>(v0, v1, v2));
+	}
+	
+	private void clipCullTriangle(Triangle<VertexOut> t) {
+		
+		if(t.v0.pos.x > t.v0.pos.w && t.v1.pos.x > t.v1.pos.w && t.v2.pos.x > t.v2.pos.w) return;
+		if(t.v0.pos.x < -t.v0.pos.w && t.v1.pos.x < -t.v1.pos.w && t.v2.pos.x < -t.v2.pos.w) return;
+		if(t.v0.pos.y > t.v0.pos.w && t.v1.pos.y > t.v1.pos.w && t.v2.pos.y > t.v2.pos.w) return;
+		if(t.v0.pos.y < -t.v0.pos.w && t.v1.pos.y < -t.v1.pos.w && t.v2.pos.y < -t.v2.pos.w) return;
+		if(t.v0.pos.z > t.v0.pos.w && t.v1.pos.z > t.v1.pos.w && t.v2.pos.z > t.v2.pos.w) return;
+		if(t.v0.pos.z < 0 && t.v1.pos.z < 0 && t.v2.pos.z < 0) return;
+		
+		
+		if(t.v0.pos.z < 0) {
+			if(t.v1.pos.z < 0) {
+				clip2(t.v0, t.v1, t.v2);
+			} else if(t.v2.pos.z < 0) {
+				clip2(t.v0, t.v2, t.v1);
+			} else {
+				clip1(t.v0, t.v1, t.v2);
+			}
+		} else if(t.v1.pos.z < 0) {
+			if(t.v2.pos.z < 0) {
+				clip2(t.v1, t.v2, t.v0);
+			} else {
+				clip1(t.v1, t.v0, t.v2);
+			}
+		} else if (t.v2.pos.z < 0){
+			clip1(t.v2, t.v0, t.v1);
+		} else {
+			postProcessTriangleVertices(t);
+		}
+	}
+	
+	private void postProcessTriangleVertices(Triangle<VertexOut> t) {
+		st.transform(t.v0);
+		st.transform(t.v1);
+		st.transform(t.v2);
+		
+		drawTriangle(t);
+	}
+	
+	private void drawTriangle(Triangle<VertexOut> triangle) {
+		
+		VertexOut v0 = triangle.v0;
+		VertexOut v1 = triangle.v1;
+		VertexOut v2 = triangle.v2;
 		
 		//Swapping so we can sort by y
-		if(v1.pos.y < v0.pos.y) {Vertex temp = v0; v0 = v1; v1 = temp;}
-		if(v2.pos.y < v1.pos.y) {Vertex temp = v1; v1 = v2; v2 = temp;}
-		if(v1.pos.y < v0.pos.y) {Vertex temp = v0; v0 = v1; v1 = temp;}
+		if(v1.pos.y < v0.pos.y) {VertexOut temp = v0; v0 = v1; v1 = temp;}
+		if(v2.pos.y < v1.pos.y) {VertexOut temp = v1; v1 = v2; v2 = temp;}
+		if(v1.pos.y < v0.pos.y) {VertexOut temp = v0; v0 = v1; v1 = temp;}
 		
 		if(v0.pos.y == v1.pos.y) {
-			if(v1.pos.x < v0.pos.x) {Vertex temp = v0; v0 = v1; v1 = temp;}
+			if(v1.pos.x < v0.pos.x) {VertexOut temp = v0; v0 = v1; v1 = temp;}
 			this.drawFlatTopTriangle(v0, v1, v2);
 		} else if(v1.pos.y == v2.pos.y) {
-			if(v2.pos.x < v1.pos.x) {Vertex temp = v1; v1 = v2; v2 = temp;}
+			if(v2.pos.x < v1.pos.x) {VertexOut temp = v1; v1 = v2; v2 = temp;}
 			this.drawFlatBottomTriangle(v0, v1, v2);
 		} else {
 			final float a = (v1.pos.y - v0.pos.y)/(v2.pos.y - v0.pos.y);
-			Vertex v = v0.interpolateTo(v2, a);
+			VertexOut v = v0.interpolateTo(v2, a);
 			if(v1.pos.x < v.pos.x) {
 				this.drawFlatBottomTriangle(v0, v1, v);
 				this.drawFlatTopTriangle(v1, v, v2);
@@ -102,32 +177,32 @@ public class Pipeline {
 		}
 	}
 	
-	private void drawFlatTopTriangle(Vertex v0, Vertex v1, Vertex v2) {
+	private void drawFlatTopTriangle(VertexOut v0, VertexOut v1, VertexOut v2) {
 		final float deltaY = v2.pos.y - v0.pos.y;
-		final Vertex dv0= v2._subtract(v0)._divide(deltaY);
-		final Vertex dv1 = v2._subtract(v1)._divide(deltaY);
+		final VertexOut dv0= v2._subtract(v0)._divide(deltaY);
+		final VertexOut dv1 = v2._subtract(v1)._divide(deltaY);
 		
-		Vertex iteratorEdge2  = new Vertex(v1);
+		VertexOut iteratorEdge2  = new VertexOut(v1);
 		
 		this.drawFlatTriangle(v0, v1, v2, dv0, dv1, iteratorEdge2);
 	}
 	
-	private void drawFlatBottomTriangle(Vertex v0, Vertex v1, Vertex v2) {
+	private void drawFlatBottomTriangle(VertexOut v0, VertexOut v1, VertexOut v2) {
 		final float deltaY = v2.pos.y - v0.pos.y;
-		final Vertex dv0= v1._subtract(v0)._divide(deltaY);
-		final Vertex dv1 = v2._subtract(v0)._divide(deltaY);
+		final VertexOut dv0= v1._subtract(v0)._divide(deltaY);
+		final VertexOut dv1 = v2._subtract(v0)._divide(deltaY);
 		
-		Vertex iteratorEdge2  = new Vertex(v0);
+		VertexOut iteratorEdge2  = new VertexOut(v0);
 		
 		this.drawFlatTriangle(v0, v1, v2, dv0, dv1, iteratorEdge2);
 	}
 	
-	private void drawFlatTriangle(Vertex v0, Vertex v1, Vertex v2, Vertex dv0, Vertex dv1, Vertex iteratorEdge1) {
+	private void drawFlatTriangle(VertexOut v0, VertexOut v1, VertexOut v2, VertexOut dv0, VertexOut dv1, VertexOut iteratorEdge1) {
 		
-		Vertex iteratorEdge0 = new Vertex(v0);
+		VertexOut iteratorEdge0 = new VertexOut(v0);
 		
-		final int yStart = (int) Math.ceil(v0.pos.y - 0.5f);
-		final int yEnd = (int) Math.ceil(v2.pos.y - 0.5f);
+		final int yStart = Math.max((int) Math.ceil(v0.pos.y - 0.5f), 0);
+		final int yEnd = Math.min((int) Math.ceil(v2.pos.y - 0.5f), GameEngine.displayHeight - 1);;
 		
 		iteratorEdge0.add(dv0._multiply((float) yStart + 0.5f - v0.pos.y));
 		iteratorEdge1.add(dv1._multiply((float) yStart + 0.5f - v0.pos.y));
@@ -135,18 +210,20 @@ public class Pipeline {
 		for(int y = yStart; y < yEnd; y++, iteratorEdge0.add(dv0), iteratorEdge1.add(dv1)) {
 			
 			
-			int xStart = (int) Math.ceil(iteratorEdge0.pos.x - 0.5f);
-			int xEnd = (int) Math.ceil(iteratorEdge1.pos.x - 0.5f);
+			int xStart = Math.max((int) Math.ceil(iteratorEdge0.pos.x - 0.5f), 0);
+			int xEnd = Math.min((int) Math.ceil(iteratorEdge1.pos.x - 0.5f), GameEngine.displayWidth - 1);
 			
-			final Vertex dIteratorLine = iteratorEdge1._subtract(iteratorEdge0)._divide(iteratorEdge1.pos.x - iteratorEdge0.pos.x);
+			final VertexOut dIteratorLine = iteratorEdge1._subtract(iteratorEdge0)._divide(iteratorEdge1.pos.x - iteratorEdge0.pos.x);
 			
-			Vertex iteratorLine = iteratorEdge0._add(dIteratorLine._multiply((float) xStart + 0.5f - iteratorEdge0.pos.x));
+			VertexOut iteratorLine = iteratorEdge0._add(dIteratorLine._multiply((float) xStart + 0.5f - iteratorEdge0.pos.x));
 			
 			for(int x = xStart; x < xEnd; x++, iteratorLine.add(dIteratorLine)) {
-				final float z = 1.0f/ iteratorLine.pos.z;
 				
-				if(depthBuffer.testAndSet(x, y, z)) {
-					final Vertex attributes = iteratorLine._multiply(z);
+				
+				if(depthBuffer.testAndSet(x, y, iteratorLine.pos.z)) {
+					final float w = 1.0f/ iteratorLine.pos.w;
+					
+					final VertexOut attributes = iteratorLine._multiply(w);
 					
 					this.g3d.drawPixel(x, y, fragShader.shade(attributes));
 				}

@@ -83,7 +83,7 @@ public class Paddle extends PongMovable {
 		}
 	}
 	
-	public void think(RefactoredBall ball) {
+	public void think(Ball ball) {
 		this.think(ball.getY(), ball.getDx(), ball.getDy());
 	}
 

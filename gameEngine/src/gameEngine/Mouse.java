@@ -1,12 +1,13 @@
 package gameEngine;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class Mouse implements MouseListener, MouseMotionListener{
-	public int mouseX;
-	public int mouseY;
+	public Point prevPosition = new Point();
+	public Point position = new Point();
 	public boolean mousePressed;
 	public boolean mouseClicked;
 	
@@ -49,7 +50,7 @@ public class Mouse implements MouseListener, MouseMotionListener{
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		this.mouseX = e.getX();
-		this.mouseY = e.getY();
+		this.prevPosition.setLocation(this.position);
+		this.position.setLocation(e.getPoint());
 	}
 }
