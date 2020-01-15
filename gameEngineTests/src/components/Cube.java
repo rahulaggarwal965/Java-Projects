@@ -41,13 +41,13 @@ public class Cube {
 			vertices.add(new Vertex(positions.get(i), t.get(i)));
 		}
 		
-		return new IndexedTriangleList<Vertex>(vertices, new ArrayList<Integer>(Arrays.asList(
+		return new IndexedTriangleList<Vertex>(vertices, new int[] {
 				0,2,1, 2,3,1,
 				1,3,5, 3,7,5,
 				2,6,3, 3,6,7,
 				4,5,7, 4,7,6,
 				0,4,2, 2,4,6,
 				0,1,4, 1,5,4	
-		)));
+		});
 	}
 }

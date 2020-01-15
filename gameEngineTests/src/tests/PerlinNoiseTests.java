@@ -8,12 +8,9 @@ import java.util.stream.IntStream;
 import components.Gradient;
 import gameEngine.GameEngine;
 import gameEngine.GameLogic;
-import math.LinearInterpolator;
 import math.Maths;
-import math.MonotoneCubicInterpolator;
 import math.Noise;
 import threeDimensions.Graphics3D;
-import threeDimensions.PackedColor;
 import threeDimensions.Vec2;
 import threeDimensions.Vec3;
 
@@ -35,17 +32,10 @@ public class PerlinNoiseTests implements GameLogic {
 	private int octaves = 6;
 	
 	private Gradient gr;
-	private float[] xValues, yValues;
-	private LinearInterpolator l;
-	private MonotoneCubicInterpolator m;
 	
 	@Override
 	public void init(Graphics2D g) throws Exception {
 		this.pixels = new int[GameEngine.displayHeight * GameEngine.displayWidth];
-		this.xValues = new float[] {0f, 0.33f, 0.5f, 0.7f, 0.9f, 1f};
-		this.yValues = new float[] {0.7f, 0.4f, 0.5f, 0.9f, 0.6f, 0.3f};
-		this.m = new MonotoneCubicInterpolator(xValues, yValues);
-		this.l = new LinearInterpolator(xValues, yValues);
 				
 		this.gr = new Gradient(
 				new Vec3[] {
@@ -104,17 +94,6 @@ public class PerlinNoiseTests implements GameLogic {
 
 	@Override
 	public void render(Graphics3D g) {
-		
-		g.fillCircle(700, 450, 200, PackedColor.White);
-		for (float f : this.yValues) {
-			float v = f * (GameEngine.displayHeight - 1);
-			g.drawLine(0, v, GameEngine.displayWidth, v, PackedColor.White);
-		}
-		for (int i = 0; i < GameEngine.displayWidth; i++) {
-			float x = (float) i / GameEngine.displayWidth;
-			g.drawPixel(i, (int) (this.m.interpolate(x) * (GameEngine.displayHeight - 1)), PackedColor.White);
-			g.drawPixel(i, (int) (this.l.interpolate(x) * (GameEngine.displayHeight - 1)), PackedColor.Green);
-		}
 		g.drawPixels(this.pixels);
 	}
 	

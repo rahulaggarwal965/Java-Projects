@@ -53,7 +53,7 @@ public class Pipeline {
 	}
 	
 	//I use ArrayLists to prepare for infinite terrain TODO: DO I really need?
-	private void processVertices(ArrayList<Vertex> vertices, ArrayList<Integer> indices) {
+	private void processVertices(ArrayList<Vertex> vertices, int[] indices) {
 		ArrayList<VertexOut> vOut = new ArrayList<VertexOut>(vertices.size());
 		
 		for (Vertex v : vertices) {
@@ -64,12 +64,12 @@ public class Pipeline {
 		assembleTriangles(vOut, indices);
 	}
 	
-	private void assembleTriangles(ArrayList<VertexOut> vertices, ArrayList<Integer> indices) {
+	private void assembleTriangles(ArrayList<VertexOut> vertices, int[] indices) {
 		final Vec4 eye = this.projection._multiply(new Vec4(0, 0, 0, 1));
-		for (int i = 0; i < indices.size() / 3; i++) {
-			VertexOut v0 = vertices.get(indices.get(i*3));
-			VertexOut v1 = vertices.get(indices.get(i*3 + 1));
-			VertexOut v2 = vertices.get(indices.get(i*3 + 2));
+		for (int i = 0; i < indices.length / 3; i++) {
+			VertexOut v0 = vertices.get(indices[i*3]);
+			VertexOut v1 = vertices.get(indices[i*3 + 1]);
+			VertexOut v2 = vertices.get(indices[i*3 + 2]);
 			
 			//Backface Culling
 			if( (v1.pos._subtract(v0.pos).cross(v2.pos._subtract(v0.pos)).dot(v0.pos._subtract(eye)) <= 0.0f)) {

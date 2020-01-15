@@ -19,10 +19,17 @@ public class PackedColor {
 	
 	
 	public static int makeRGB(int r, int g, int b) {
+		r = Maths.clamp(r, 0, 255);
+		g = Maths.clamp(g, 0, 255);
+		b = Maths.clamp(b, 0, 255);
 		return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
 	}
 	
 	public static int makeRGBA(int r, int g, int b, int a) {
+		r = Maths.clamp(r, 0, 255);
+		g = Maths.clamp(g, 0, 255);
+		b = Maths.clamp(b, 0, 255);
+		a = Maths.clamp(a, 0, 255);
 		return (a & 0xff) << 24  | (r & 0xff) << 16 | ((g & 0xff) << 8) | (b & 0xff);
 	}
 	

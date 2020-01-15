@@ -24,9 +24,9 @@ public class TestTriangle {
 			vertices.add(new Vertex(positions.get(i), new Vec2(0,0)));
 		}
 		
-		return new IndexedTriangleList<Vertex>(vertices, new ArrayList<Integer>(Arrays.asList(
+		return new IndexedTriangleList<Vertex>(vertices, new int[] {
 				0,1,2
-		)));
+		});
 	}
 
 }
