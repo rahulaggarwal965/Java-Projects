@@ -12,7 +12,7 @@ The goal of this project was to start from just the ability to render a pixel on
 
 ##### II. A High-level View
 
-<video width-"320" height="180"><source src="../../Desktop/test.m4v"></video>
+<video width="320" height="180"><source src="test.m4v"></video>
 
 In terms of how I started this project, although I primarily use C++, I decided to use Java for its built-in cross platform capabilities with the JVM. Additionally, it included an entire library for creating a window and rendering to it, which was incredibly helpful. Although it does not offer the same level of performance or control (Generics) as C++, it provided a suitable platform for development.
 
