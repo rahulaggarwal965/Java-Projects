@@ -1,2 +1,2 @@
-# Comp-Sci-A
-Code for Computer Science A and other random stuff :)
+# Java-Projects
+Code for my Java projects and other random stuff :)
