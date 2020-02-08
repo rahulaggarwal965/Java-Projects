@@ -3,48 +3,49 @@ package tests;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.Random;
+import java.util.Vector;
 
-import components.Cube;
-import components.Mesh;
+import components.Terrain;
 import gameEngine.GameEngine;
 import gameEngine.GameLogic;
+import math.Gradient;
 import math.Maths;
 import math.Noise;
+import shaders.GeometryLightShader;
 import threeDimensions.Camera;
 import threeDimensions.Graphics3D;
-import threeDimensions.IndexedTriangleList;
 import threeDimensions.Matrix;
+import threeDimensions.Mesh;
 import threeDimensions.Pipeline;
 import threeDimensions.Vec2;
 import threeDimensions.Vec3;
-import threeDimensions.Vertex;
-import threeDimensions.VertexOut;
 
 public class MeshTest implements GameLogic{
 	
 	private static final float ASPECT_RATIO = 1.777777f; //16:9
 	private static final float FOV = 95.0f;
-	private static final float CAMERA_SPEED = 1.0f;
+	private static final float CAMERA_SPEED = 3.0f;
 	
 	private boolean paused = false;
 	
 	private Pipeline pipeline;
+	private GeometryLightShader s;
 	private Camera camera;
 	private Matrix projection;
 	
-	private Vec3 modelPosition = new Vec3(0, 0, 2);
-	private float tx = 0, ty = 0, tz = 0;
+	private Vec3 modelPosition0 = new Vec3(0, 0, 0);
 	
 	//Map Stuff
-	private long seed = 0;
-	private double scale = 100;
+	private long seed = 2;
 	private double persistence = 0.5;
 	private double lacunarity = 2.0;
-	private int octaves = 6;
+	private int octaves = 7;
 	
-	private int rows = 100, cols = 100;
+	private Gradient gr;
 	
-	private IndexedTriangleList<Vertex> terrain;
+	private int rows = 5, cols = 5;
+	
+	private Mesh terrain0;
 	
 	public static void main(String[] args) {
 		MeshTest mt = new MeshTest();
@@ -53,18 +54,30 @@ public class MeshTest implements GameLogic{
 
 	@Override
 	public void init(Graphics2D g) throws Exception {
-		this.camera = new Camera(0, 0, 0, 0, 0, 0);
-		this.projection = Matrix.ProjectionFOV(4, FOV, ASPECT_RATIO, 0.1f, 10f);
+		this.camera = new Camera(0, 100, 0, 0, 0, 0);
+		this.camera.rotationAngles.x = (float) Math.PI/2;
+		this.projection = Matrix.ProjectionFOV(4, FOV, ASPECT_RATIO, 0.05f, 1000f);
 		
-		this.pipeline = new Pipeline();
-		pipeline.fragShader.setTexture(GameEngine.loadImage("/Users/infinity/Desktop/SauronEye.png"));
+		this.s = new GeometryLightShader();
+		this.pipeline = new Pipeline(this.s);
 		
-		float[] map = generateMap(rows, cols);
-		this.terrain = Mesh.getTexturedTriangle(rows, cols, map);
-		/*System.out.println(this.terrain.indices.length);
-		for (int i = 0; i < this.terrain.indices.length / 3; i++) {
-			System.out.printf("%d, %d, %d\n", this.terrain.indices[i*3], this.terrain.indices[i*3 + 1], this.terrain.indices[i*3 + 2]);
-		}*/
+		this.gr = new Gradient(
+				new Vec3[] {
+						new Vec3(40, 89, 3),
+						new Vec3(97, 99, 65),
+						new Vec3(164, 109, 56),
+						new Vec3(121, 67, 9),
+						new Vec3(61, 56, 50),
+						new Vec3(255, 255, 255)},
+				new float[] {
+						0f,
+						0.24f,
+						0.44f,
+						0.65f,
+						0.90f,
+						0.96f});
+		float[] map0 = generateMap(rows, cols, 0, 0);
+		this.terrain0 = Terrain.getTriangles(20, 10, 20, map0, rows, cols, gr);
 		
 	}
 
@@ -97,15 +110,19 @@ public class MeshTest implements GameLogic{
 		//Rotation
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_LEFT]) {
 			this.camera.rotationAngles.y = Maths.wrapAngle(this.camera.rotationAngles.y - 0.05f);
+			//this.modelPosition1.x -= 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_RIGHT]) {
 			this.camera.rotationAngles.y = Maths.wrapAngle(this.camera.rotationAngles.y + 0.05f);
+			//this.modelPosition1.x += 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_UP]) {
 			this.camera.rotationAngles.x = Maths.wrapAngle(this.camera.rotationAngles.x - 0.05f);
+			//this.modelPosition1.z += 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_DOWN]) {
 			this.camera.rotationAngles.x = Maths.wrapAngle(this.camera.rotationAngles.x + 0.05f);
+			//this.modelPosition1.z -= 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_Q]) {
 			this.camera.rotationAngles.z = Maths.wrapAngle(this.camera.rotationAngles.z + 0.05f);
@@ -139,33 +156,39 @@ public class MeshTest implements GameLogic{
 		
 		Matrix view = this.camera.rotationInverse.multiply(Matrix.Translation(this.camera.position._negate()));
 		
-		Matrix world = Matrix.Translation(this.modelPosition)
-				.multiply(Matrix.rotationZ(4, tz))
-				.multiply(Matrix.rotationY(4, ty))
-				.multiply(Matrix.rotationX(4, tx));
-
-		pipeline.setWorld(world);
-		pipeline.setView(view);
-		pipeline.setProjection(this.projection);
-		pipeline.draw(g, this.terrain);
+		Matrix world = Matrix.Translation(this.modelPosition0);
+		
+		s.setWorld(world);
+		s.setView(view);
+		s.setProjection(this.projection);
+		pipeline.draw(g, this.terrain0);
 	}
 	
-	public float[] generateMap(int rows, int cols) {
+	public float[] generateMap(int rows, int cols, float x, float y) {
 		float[] map = new float[rows * cols];
+		
+//		float min = Float.MAX_VALUE;
+//		float max = Float.MIN_VALUE;
 		
 		Random rand = new Random(this.seed);
 		Vec2[] offsets = new Vec2[this.octaves];
 		for (int i = 0; i < octaves; i++) {
-			float offsetX = rand.nextInt(20000) - 10000;
-			float offsetY = rand.nextInt(20000) - 10000;
+			float offsetX = rand.nextInt(20000) - 10000 + x;
+			float offsetY = rand.nextInt(20000) - 10000 + y;
 			offsets[i] = new Vec2(offsetX, offsetY);
 		}
 		
 		for (int j = 0; j < rows; j++) {
 			for (int i = 0; i < cols; i++) {
-				map[i + j*cols] = (float) Noise.noise(i/scale, j/scale, 0, this.octaves, this.persistence, this.lacunarity, offsets) * 0.5f + 0.5f;
+				float h = (float) Noise.noise((float) i/cols, (float) j/rows, 0, this.octaves, this.persistence, this.lacunarity, offsets) * 0.5f + 0.5f;
+				map[i + j*cols] = h * 2f;
+//				if(h < min) min = h;
+//				if(h > max) max = h;
 			}
 		}
+//		for (int i = 0; i < map.length; i++) {
+//			map[i] = Maths.map(map[i], min, max, 0, 1);
+//		}
 		return map;
 	}
 }

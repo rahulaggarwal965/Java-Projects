@@ -176,7 +176,7 @@ public class GameEngine extends Canvas implements Runnable {
 				byte b = src[j++];
 				byte g = src[j++];
 				byte r = src[j++];
-				pixels[i] = a << 24 | r << 16 | g << 8 | b;
+				pixels[i] = ((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
 			}
 		}
 		return new Texture(pixels, img.getWidth(), img.getHeight());

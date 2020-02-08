@@ -5,12 +5,13 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import components.Gradient;
 import gameEngine.GameEngine;
 import gameEngine.GameLogic;
+import math.Gradient;
 import math.Maths;
 import math.Noise;
 import threeDimensions.Graphics3D;
+import threeDimensions.PackedColor;
 import threeDimensions.Vec2;
 import threeDimensions.Vec3;
 
@@ -101,8 +102,8 @@ public class PerlinNoiseTests implements GameLogic {
 		float i = index % GameEngine.displayWidth - GameEngine.displayWidth/2;
 		float j = index / GameEngine.displayHeight - GameEngine.displayHeight/2;
 		double n =  Noise.noise(i/scale, j/scale, 0, this.octaves, this.persistence, this.lacunarity, offsets) * 0.5 + 0.5;
-		return this.gr.getColor((float) n);
-		//return PackedColor.makeRGB(n, n, n);
+		//return this.gr.getPackedColor((float) n);
+		return PackedColor.makeRGB(n, n, n);
 	}
 	
 	public void updatePixels() {

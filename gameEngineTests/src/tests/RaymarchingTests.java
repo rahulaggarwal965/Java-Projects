@@ -59,12 +59,12 @@ public class RaymarchingTests implements GameLogic {
 	}
 	
 	public float boxDistance(Vec3 p, Vec3 s) {
-		return p._abs()._subtract(s)._max(0).len();
+		return p._abs()._subtract(s)._max(0).mag();
 	}
 	
 	public float distanceToScene(Vec3 point) {
 		//Get Distance to Each object
-		float sphereDistance = (point._subtract(spherePosition)).len() - 1f;
+		float sphereDistance = (point._subtract(spherePosition)).mag() - 1f;
 		float boxDistance = boxDistance(point._subtract(boxPosition), boxDimensions);
 		float planeDistance = point.y;
 		
@@ -99,7 +99,7 @@ public class RaymarchingTests implements GameLogic {
 		
 		//Shadow
 		float distanceToLight = rayMarch(point._add(surfaceNormal._multiply(SURFACE_DIST*2)), lightNormal);
-		if (distanceToLight < this.transformedLightPosition._subtract(point).len()) diffuse *= 0.1;
+		if (distanceToLight < this.transformedLightPosition._subtract(point).mag()) diffuse *= 0.1;
 		
 		return diffuse;
 	}
@@ -148,7 +148,7 @@ public class RaymarchingTests implements GameLogic {
 		float mX = Maths.map(m.x, 0, GameEngine.displayWidth - 1, -1, 1);
 		float mY = Maths.map(m.y, 0, GameEngine.displayHeight - 1, 1, -1);
 		
-		float l = Maths.clamp(m._subtract(this.resolution._divide(2)).len(), 0f, 300f);
+		float l = Maths.clamp(m._subtract(this.resolution._divide(2)).mag(), 0f, 300f);
 		
 		
 		float mZ = Maths.map(l, 0, GameEngine.displayWidth/2, 4, 1f);

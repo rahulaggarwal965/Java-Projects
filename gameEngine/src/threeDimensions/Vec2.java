@@ -1,6 +1,8 @@
 package threeDimensions;
 
-public class Vec2 {
+import math.Maths;
+
+public class Vec2{
 	public float x, y;
 	
 	public Vec2(float x, float y) {
@@ -13,9 +15,14 @@ public class Vec2 {
 		this.y = v.y;
 	}
 	
-	public void copy(Vec2 v) {
+	public void set(Vec2 v) {
 		this.x = v.x;
 		this.y = v.y;
+	}
+	
+	public void set(float x, float y) {
+		this.x = x;
+		this.y = y;
 	}
 	
 	public void abs() {
@@ -27,21 +34,20 @@ public class Vec2 {
 		return new Vec2(Math.abs(this.x), Math.abs(this.y));
 	}
 	
-	public float lenSq() {
+	public float magSq() {
 		return this.x*this.x + this.y*this.y;
 	}
 	
-	public float len() {
+	public float mag() {
 		return (float) Math.sqrt(this.x*this.x + this.y*this.y);
 	}
 	
 	public void normalize() {
-		this.divide(this.len());
+		this.divide(this.mag());
 	}
 	
 	public Vec2 getNormalized() {
-		float l = this.len();
-		return new Vec2(this.x/l, this.y/l);
+		return this._divide(this.mag());
 	}
 	
 	public float dot(Vec2 v) {
@@ -147,12 +153,23 @@ public class Vec2 {
 		return new Vec2(Math.min(this.x, f), Math.min(this.y, f));
 	}
 	
-	public boolean isEqual(Vec2 v) {
-		return (this.x == v.x && this.y == v.y);
+	public void clamp(float l, float h) {
+		this.x = Maths.clamp(this.x, l, h);
+		this.y = Maths.clamp(this.y, l, h);
+	}
+
+	public Vec2 _clamp(float l, float h) {
+		return new Vec2(
+				Maths.clamp(this.x, l, h),
+				Maths.clamp(this.y, l, h));
 	}
 	
 	public Vec2 interpolateTo(Vec2 dest, float alpha) {
 		return this._add(dest._subtract(this)._multiply(alpha));
+	}
+	
+	public boolean equals(Vec2 v) {
+		return (this.x == v.x && this.y == v.y);
 	}
 	
 	public void print() {

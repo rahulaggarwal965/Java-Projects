@@ -138,6 +138,11 @@ public class Matrix {
 	}
 
 	
+	/*public static Matrix Translation(Vector v) {
+		if(v.data.length != 3) throw new IllegalArgumentException("Translation Vector must be length 3");
+		return Matrix.Translation(4, v.data[0], v.data[1], v.data[2]);
+	}*/
+	
 	public static Matrix Translation(Vec3 v) {
 		return Matrix.Translation(4, v.x, v.y, v.z);
 	}
@@ -175,6 +180,45 @@ public class Matrix {
 		}
 		else throw new IllegalArgumentException("Only size 4 Projection matrices are supported");
 	}
+	
+	/*public void multiply(Vector v) {
+		if(v.data.length == 3) {
+			if(this.cols != 3) throw new IllegalStateException("RefactoredMatrix does not have 3 columns");
+			float x = this.data[0]*v.data[0] + this.data[1]*v.data[1] + this.data[2]*v.data[2];
+			float y = this.data[3]*v.data[0] + this.data[4]*v.data[1] + this.data[5]*v.data[2];
+			float z = this.data[6]*v.data[0] + this.data[7]*v.data[1] + this.data[8]*v.data[2];
+			v.data[0] = x;
+			v.data[1] = y;
+			v.data[2] = z;
+		} else if(v.data.length == 4) {
+			if(this.cols != 4) throw new IllegalStateException("RefactoredMatrix does not have 4 columns");
+			float x = this.data[0]*v.data[0] + this.data[1]*v.data[1] + this.data[2]*v.data[2] + this.data[3]*v.data[3];
+			float y = this.data[4]*v.data[0] + this.data[5]*v.data[1] + this.data[6]*v.data[2] + this.data[7]*v.data[3];
+			float z = this.data[8]*v.data[0] + this.data[9]*v.data[1] + this.data[10]*v.data[2] + this.data[11]*v.data[3];
+			float w = this.data[12]*v.data[0] + this.data[13]*v.data[1] + this.data[14]*v.data[2] + this.data[15]*v.data[3];
+			v.data[0] = x;
+			v.data[1] = y;
+			v.data[2] = z;
+			v.data[3] = w;
+		} else throw new IllegalArgumentException("Only Vector lengths of 3 and 4 are supported");
+	}
+	
+	public Vector _multiply(Vector v) {
+		if(v.data.length == 3) {
+			if(this.cols != 3) throw new IllegalStateException("RefactoredMatrix does not have 3 columns");
+			return new Vector(
+					this.data[0]*v.data[0] + this.data[1]*v.data[1] + this.data[2]*v.data[2],
+					this.data[3]*v.data[0] + this.data[4]*v.data[1] + this.data[5]*v.data[2],
+					this.data[6]*v.data[0] + this.data[7]*v.data[1] + this.data[8]*v.data[2]);
+		} else if(v.data.length == 4) {
+			if(this.cols != 4) throw new IllegalStateException("RefactoredMatrix does not have 4 columns");
+			return new Vector(
+				this.data[0]*v.data[0] + this.data[1]*v.data[1] + this.data[2]*v.data[2] + this.data[3]*v.data[3],
+				this.data[4]*v.data[0] + this.data[5]*v.data[1] + this.data[6]*v.data[2] + this.data[7]*v.data[3],
+				this.data[8]*v.data[0] + this.data[9]*v.data[1] + this.data[10]*v.data[2] + this.data[11]*v.data[3],
+				this.data[12]*v.data[0] + this.data[13]*v.data[1] + this.data[14]*v.data[2] + this.data[15]*v.data[3]);
+		} else throw new IllegalArgumentException("Only Vector lengths of 3 and 4 are supported");
+	}*/
 	
 	public void multiply(Vec3 v) {
 		if(this.cols != 3) throw new IllegalStateException("Matrix does not have 3 columns");
@@ -232,14 +276,6 @@ public class Matrix {
 			if(this.data[i] != m.data[i]) return false;
 		}
 		return true;
-	}
-	
-	public static void main(String[] args) {
-		Matrix m = Matrix.Identity(4);
-		Matrix t = m.transpose();
-		m.print();
-		System.out.println();
-		t.print();
 	}
 	
 }

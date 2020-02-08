@@ -1,5 +1,7 @@
 package threeDimensions;
 
+import math.Maths;
+
 public class Vec3 extends Vec2 {
 	
 	public float z;
@@ -13,6 +15,23 @@ public class Vec3 extends Vec2 {
 		this(v.x, v.y, v.z);
 	}
 	
+	public Vec3(Vec2 v, float z) {
+		super(v);
+		this.z = z;
+	}
+	
+	public void set(Vec3 v) {
+		this.x = v.x;
+		this.y = v.y;
+		this.z = v.z;
+	}
+	
+	public void set(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 	public void abs() {
 		this.x = Math.abs(this.x);
 		this.y = Math.abs(this.y);
@@ -23,21 +42,20 @@ public class Vec3 extends Vec2 {
 		return new Vec3(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
 	}
 	
-	public float lenSq() {
+	public float magSq() {
 		return this.x*this.x + this.y*this.y + this.z*this.z;
 	}
 	
-	public float len() {
-		return (float) Math.sqrt(this.lenSq());
+	public float mag() {
+		return (float) Math.sqrt(this.magSq());
 	}
 	
 	public void normalize() {
-		this.divide(this.len());
+		this.divide(this.mag());
 	}
 	
 	public Vec3 getNormalized() {
-		float l = this.len();
-		return new Vec3(this.x/l, this.y/l, this.z/l);
+		return this._divide(this.mag());
 	}
 	
 	public float dot(Vec3 v) {
@@ -162,12 +180,26 @@ public class Vec3 extends Vec2 {
 		return new Vec3(Math.min(this.x, f), Math.min(this.y, f), Math.min(this.z, f));
 	}
 	
-	public boolean isEqual(Vec3 v) {
-		return (this.x == v.x && this.y == v.y && this.z == v.z);
+	public void clamp(float l, float h) {
+		this.x = Maths.clamp(this.x, l, h);
+		this.y = Maths.clamp(this.y, l, h);
+		this.z = Maths.clamp(this.z, l, h);
+	}
+	
+	public Vec3 _clamp(float l, float h) {
+		return new Vec3(
+				Maths.clamp(this.x, l, h),
+				Maths.clamp(this.y, l, h),
+				Maths.clamp(this.z, l, h)
+				);
 	}
 	
 	public Vec3 interpolateTo(Vec3 dest, float alpha) {
 		return this._add(dest._subtract(this)._multiply(alpha));
+	}
+	
+	public boolean equals(Vec3 v) {
+		return (this.x == v.x && this.y == v.y && this.z == v.z);
 	}
 	
 	public void print() {

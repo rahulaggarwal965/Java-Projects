@@ -25,7 +25,7 @@ public class Graphics3D {
 	}
 	
 	public void drawClippedPixel(int x, int y, int color) {
-		if(x >= 0 && x < GameEngine.displayWidth && y >= 0 && y <= GameEngine.displayHeight) {
+		if(x >= 0 && x < GameEngine.displayWidth && y >= 0 && y < GameEngine.displayHeight) {
 			this.pixels[y * GameEngine.displayWidth + x] = color;
 		}
 	}
@@ -36,11 +36,12 @@ public class Graphics3D {
 		}
 	}
 	
+	//TODO: do geometric clipping
 	public void drawLine(float x1, float y1, float x2, float y2, int color) {
 		float dx = x2 - x1;
 		float dy = y2 - y1;
 		if(dy == 0.0f && dx == 0.0f) {
-			this.drawPixel((int) x1, (int) y1, color);
+			this.drawClippedPixel((int) x1, (int) y1, color);
 		} else if (Math.abs(dy) > Math.abs(dx)) {
 			if(dy < 0.0f) {
 				float temp = x1;
@@ -56,10 +57,10 @@ public class Graphics3D {
 			int lastIntY = (int) y;
 			for (float x = x1; y < y2; y += 1.0f, x+=m) {
 				lastIntY = (int) y;
-				this.drawPixel((int) x, lastIntY, color);
+				this.drawClippedPixel((int) x, lastIntY, color);
 			}
 			if((int) y2 > lastIntY) {
-				this.drawPixel((int) x2, (int) y2, color);
+				this.drawClippedPixel((int) x2, (int) y2, color);
 			}
  		} else {
  			if(dx < 0.0f) {
@@ -76,10 +77,10 @@ public class Graphics3D {
 			int lastIntX = (int) x;
 			for (float y = y1; x < x2; x += 1.0f, y+=m) {
 				lastIntX = (int) x;
-				this.drawPixel(lastIntX, (int) y, color);
+				this.drawClippedPixel(lastIntX, (int) y, color);
 			}
 			if((int) x2 > lastIntX) {
-				this.drawPixel((int) x2, (int) y2, color);
+				this.drawClippedPixel((int) x2, (int) y2, color);
 			}
  		}
 	}

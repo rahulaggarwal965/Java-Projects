@@ -14,7 +14,7 @@ public final class Noise {
 			double total = 0;
 			double max = 0;
 			for (int i = 0; i < octaves; i++) {
-				total += amp * noise(x * freq + offsets[i].x, y * freq + offsets[i].y, z * freq);
+				total += amp * noise((x + offsets[i].x) * freq , (y + offsets[i].y) * freq, z * freq);
 				max += amp;
 				amp *= persistence;
 				freq *= lacunarity;

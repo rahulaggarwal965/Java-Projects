@@ -41,6 +41,14 @@ public class PackedColor {
 		return makeRGBA((int) (r*255), (int) (g * 255), (int) (b*255), (int) (a*255));
 	}
 	
+	public static int makeRGB(float r, float g, float b) {
+		return makeRGB((int) r, (int) g, (int) b);
+	}
+	
+	public static int makeRGBA(float r, float g, float b, float a) {
+		return makeRGBA((int) r, (int) g, (int) b, (int) a);
+	}
+	
 	public static int makeRGB(Vec3 color) {
 		return makeRGB((int) color.x, (int) color.y, (int) color.z);
 	}

@@ -47,5 +47,11 @@ public final class Maths {
 		return Math.sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1)); 
 	}
 	
+	public static float squaredDistanceToRect(float x, float y, float rx, float ry, float w, float h) {
+		float dx = Math.max(Math.abs(x - rx) - w/2, 0);
+		float dy = Math.max(Math.abs(y - ry) - h/2, 0);
+		return dx * dx + dy * dy;
+	}
+	
 	
 }

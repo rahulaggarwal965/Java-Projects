@@ -1,8 +1,7 @@
 package threeDimensions;
 
 public class Camera {
-	
-	
+
 	public final static Vec4 worldRight = new Vec4(1, 0, 0, 0);
 	public final static Vec4 worldUp = new Vec4(0, 1, 0, 0);
 	public final static Vec4 worldForward = new Vec4(0, 0, 1, 0);
@@ -28,9 +27,10 @@ public class Camera {
 	}
 	
 	public void rotate() {
-		//this.rotationInverse = Matrix.rotationZ(4, this.rotationAngles.z).multiply(Matrix.rotationX(4, -this.rotationAngles.x).multiply(Matrix.rotationY(4, -this.rotationAngles.y)));
-		this.rotationInverse = Matrix.rotationX(4, -this.rotationAngles.x).multiply(Matrix.rotationY(4, -this.rotationAngles.y)).multiply(Matrix.rotationZ(4, -this.rotationAngles.z));
-		Matrix rotation = this.rotationInverse.transpose();
+		this.rotationInverse = Matrix.rotationX(4, -this.rotationAngles.x)
+				.multiply(Matrix.rotationY(4, -this.rotationAngles.y))
+				.multiply(Matrix.rotationZ(4, -this.rotationAngles.z));
+		Matrix rotation = this.rotationInverse.transpose(); //orthographic inverse
 		this.right = rotation._multiply(worldRight);
 		this.up = rotation._multiply(worldUp);
 		this.forward = rotation._multiply(worldForward);

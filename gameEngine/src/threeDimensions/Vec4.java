@@ -1,5 +1,7 @@
 package threeDimensions;
 
+import math.Maths;
+
 public class Vec4 extends Vec3 {
 	
 	public float w;
@@ -13,8 +15,23 @@ public class Vec4 extends Vec3 {
 		this(v.x, v.y, v.z, v.w);
 	}
 	
-	public Vec4(Vec3 v) {
-		this(v.x, v.y, v.z, 1);
+	public Vec4(Vec3 v, float w) {
+		super(v);
+		this.w = w;
+	}
+	
+	public void set(Vec4 v) {
+		this.x = v.x;
+		this.y = v.y;
+		this.z = v.z;
+		this.w = v.w;
+	}
+	
+	public void set(float x, float y, float z, float w) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
 	}
 	
 	public void abs() {
@@ -26,6 +43,26 @@ public class Vec4 extends Vec3 {
 	
 	public Vec4 _abs() {
 		return new Vec4(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z), Math.abs(this.w));
+	}
+	
+	public float magSq() {
+		return this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w;
+	}
+	
+	public float mag() {
+		return (float) Math.sqrt(this.magSq());
+	}
+	
+	public void normalize() {
+		this.divide(this.mag());
+	}
+	
+	public Vec3 getNormalized() {
+		return this._divide(this.mag());
+	}
+	
+	public float dot(Vec4 v) {
+		return this.x * v.x + this.y * v.y + this.z*v.z + this.w*this.w;
 	}
 	
 	public void negate() {
@@ -149,16 +186,31 @@ public class Vec4 extends Vec3 {
 		return new Vec4(Math.min(this.x, f), Math.min(this.y, f), Math.min(this.z, f), Math.min(this.w, f));
 	}
 	
-	public boolean isEqual(Vec4 v) {
-		return (this.x == v.x && this.y == v.y && this.z == v.z && this.w == v.w);
+	public void clamp(float l, float h) {
+		this.x = Maths.clamp(this.x, l, h);
+		this.y = Maths.clamp(this.y, l, h);
+		this.z = Maths.clamp(this.z, l, h);
+		this.w = Maths.clamp(this.w, l, h);
+	}
+	
+	public Vec4 _clamp(float l, float h) {
+		return new Vec4(
+				Maths.clamp(this.x, l, h),
+				Maths.clamp(this.y, l, h),
+				Maths.clamp(this.z, l, h),
+				Maths.clamp(this.w, l, h)
+				);
 	}
 	
 	public Vec4 interpolateTo(Vec4 dest, float alpha) {
 		return this._add(dest._subtract(this)._multiply(alpha));
 	}
 	
+	public boolean equals(Vec4 v) {
+		return (this.x == v.x && this.y == v.y && this.z == v.z && this.w == v.w);
+	}
+	
 	public void print() {
 		System.out.printf("x: %f, y: %f, z: %f, w: %f\n", this.x, this.y, this.z, this.w);
 	}
-
 }

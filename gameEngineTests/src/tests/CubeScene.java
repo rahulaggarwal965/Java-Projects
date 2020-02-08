@@ -4,16 +4,16 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 import components.Cube;
+import components.Skybox;
 import gameEngine.GameEngine;
 import gameEngine.GameLogic;
 import math.Maths;
+import shaders.TextureShader;
 import threeDimensions.Camera;
 import threeDimensions.Graphics3D;
-import threeDimensions.IndexedTriangleList;
 import threeDimensions.Matrix;
 import threeDimensions.Pipeline;
 import threeDimensions.Vec3;
-import threeDimensions.Vertex;
 
 
 public class CubeScene implements GameLogic {
@@ -25,12 +25,10 @@ public class CubeScene implements GameLogic {
 	private boolean paused = false;
 	
 	private Pipeline pipeline;
+	private TextureShader s;
 	private Camera camera;
-	private IndexedTriangleList<Vertex> iTriList;
+	private Skybox sb;
 	private Matrix projection;
-	
-	private Vec3 modelPosition = new Vec3(0, 0, 2);
-	private float tx = 0, ty = 0, tz = 0;
 	
 	public static void main(String[] args) {
 		CubeScene cs = new CubeScene();
@@ -44,9 +42,11 @@ public class CubeScene implements GameLogic {
 		this.camera = new Camera(0, 0, 0, 0, 0, 0);
 		this.projection = Matrix.ProjectionFOV(4, FOV, ASPECT_RATIO, 0.1f, 10f);
 		
-		this.pipeline = new Pipeline();
-		this.iTriList = Cube.getTexturedTriangles(1.0f, 1);
-		pipeline.fragShader.setTexture(GameEngine.loadImage("/Users/infinity/Desktop/SauronEye.png"));
+		this.s = new TextureShader();
+		this.pipeline = new Pipeline(s);
+		this.sb = new Skybox("/Users/infinity/Desktop/Coding Images/skybox.jpg");
+		sb.setScale(5);
+		this.s.setTexture(sb.getTexture());
 	}
 
 	@Override
@@ -133,17 +133,18 @@ public class CubeScene implements GameLogic {
 	public void render(Graphics3D g) {
 		pipeline.beginFrame();
 		
-		Matrix view = this.camera.rotationInverse.multiply(Matrix.Translation(this.camera.position._negate()));
-		
-		Matrix world = Matrix.Translation(this.modelPosition)
-				.multiply(Matrix.rotationZ(4, tz))
-				.multiply(Matrix.rotationY(4, ty))
-				.multiply(Matrix.rotationX(4, tx));
+		Matrix view = this.camera.rotationInverse;/*.multiply(Matrix.Translation(this.camera.position._negate()));**/
+		Vec3 rotation = this.sb.getRotation();
+		Matrix world = Matrix.Translation(this.sb.getPosition())
+				.multiply(Matrix.rotationZ(4, rotation.z))
+				.multiply(Matrix.rotationY(4, rotation.x))
+				.multiply(Matrix.rotationX(4, rotation.y))
+				.multiply(Matrix.Scale(4, this.sb.getScale()));
 
-		pipeline.setWorld(world);
-		pipeline.setView(view);
-		pipeline.setProjection(this.projection);
-		pipeline.draw(g, this.iTriList);
+		this.s.setWorld(world);
+		this.s.setView(view);
+		this.s.setProjection(this.projection);
+		pipeline.draw(g, this.sb.getMesh());
 		
 	}
 }
