@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 import gameEngine.GameEngine;
+import math.Maths;
 
 public class Graphics3D {
 	
@@ -35,13 +36,20 @@ public class Graphics3D {
 			this.pixels[i] = pixels[i];
 		}
 	}
-	
-	//TODO: do geometric clipping
 	public void drawLine(float x1, float y1, float x2, float y2, int color) {
+		//Geometric Clipping
+				x1 = Maths.clamp(x1, 0, GameEngine.displayWidth - 1);
+				x2 = Maths.clamp(x2, 0, GameEngine.displayWidth - 1);
+				y1 = Maths.clamp(y1, 0, GameEngine.displayHeight - 1);
+				y2 = Maths.clamp(y2, 0, GameEngine.displayHeight - 1);
+		
 		float dx = x2 - x1;
 		float dy = y2 - y1;
+		
+		
+		
 		if(dy == 0.0f && dx == 0.0f) {
-			this.drawClippedPixel((int) x1, (int) y1, color);
+			this.drawPixel((int) x1, (int) y1, color);
 		} else if (Math.abs(dy) > Math.abs(dx)) {
 			if(dy < 0.0f) {
 				float temp = x1;
@@ -57,10 +65,10 @@ public class Graphics3D {
 			int lastIntY = (int) y;
 			for (float x = x1; y < y2; y += 1.0f, x+=m) {
 				lastIntY = (int) y;
-				this.drawClippedPixel((int) x, lastIntY, color);
+				this.drawPixel((int) x, lastIntY, color);
 			}
 			if((int) y2 > lastIntY) {
-				this.drawClippedPixel((int) x2, (int) y2, color);
+				this.drawPixel((int) x2, (int) y2, color);
 			}
  		} else {
  			if(dx < 0.0f) {
@@ -77,10 +85,10 @@ public class Graphics3D {
 			int lastIntX = (int) x;
 			for (float y = y1; x < x2; x += 1.0f, y+=m) {
 				lastIntX = (int) x;
-				this.drawClippedPixel(lastIntX, (int) y, color);
+				this.drawPixel(lastIntX, (int) y, color);
 			}
 			if((int) x2 > lastIntX) {
-				this.drawClippedPixel((int) x2, (int) y2, color);
+				this.drawPixel((int) x2, (int) y2, color);
 			}
  		}
 	}
@@ -160,6 +168,12 @@ public class Graphics3D {
 				this.drawSymmetricCirclePoint(xc, yc, x, i, color);
 			}
  		}
+	}
+	
+	public void drawTriangle(Triangle t, int color) {
+		this.drawLine(t.v0.position, t.v1.position, color);
+		this.drawLine(t.v1.position, t.v2.position, color);
+		this.drawLine(t.v2.position, t.v0.position, color);
 	}
 	
 	public BufferedImage getImage() {

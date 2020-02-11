@@ -6,7 +6,7 @@ import threeDimensions.Triangle;
 import threeDimensions.Vec4;
 import threeDimensions.Vertex;
 
-public abstract class Shader {
+public class Shader {
 
 	//RefactoredVertexShader Fields
 	protected Matrix world = Matrix.Identity(4);

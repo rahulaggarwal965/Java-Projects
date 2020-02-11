@@ -7,7 +7,7 @@ import threeDimensions.Vec3;
 import threeDimensions.Vec4;
 import threeDimensions.Vertex;
 
-public class GeometryLightShader extends Shader {
+public class GeometryLightShader extends ColorShader {
 
 	private Vec3 diffuse = new Vec3(1, 1, 1);
 	private Vec3 ambient = new Vec3(0.3f, 0.3f, 0.3f);
@@ -39,13 +39,6 @@ public class GeometryLightShader extends Shader {
 		this.worldView = this.view.multiply(this.world);
 		this.worldViewProjection = this.projection.multiply(this.worldView);
 		this.transformedLightDirection = this.view._multiply(lightDirection);
-	}
-
-	@Override
-	public Vertex VertexShader(float[] v) {
-		Vec4 position = new Vec4(v[0], v[1], v[2], 1.0f);
-		this.worldViewProjection.multiply(position);
-		return new Vertex(position, v[3], v[4], v[5]);
 	}
 	
 	@Override

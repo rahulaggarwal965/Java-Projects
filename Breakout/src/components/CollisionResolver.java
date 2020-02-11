@@ -48,11 +48,11 @@ public class CollisionResolver {
 				Vec2 ballPrevPosition = bl.getPreviousPosition();
 				
 				if(ballPrevPosition.y + bl.size.y < br.position.y || ballPrevPosition.y > br.position.y + br.size.y) {
-					bl.position.copy(ballPrevPosition);
+					bl.position.set(ballPrevPosition);
 					bl.updateHitbox();	
 					bl.setAngle(-bl.angle); // Top or Bottom
 				} else {
-					bl.position.copy(ballPrevPosition);
+					bl.position.set(ballPrevPosition);
 					bl.updateHitbox();
 					bl.setAngle((float) Math.PI - bl.angle); // Left or Right
 				}

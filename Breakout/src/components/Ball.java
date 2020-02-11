@@ -52,16 +52,16 @@ public class Ball extends GameObject {
 			} else {
 				this.ps.addParticle(this.previousPosition, this.size, (float) (this.angle - Math.PI + Maths.randomBilateral() * 0.5), 40.0f, 0, 0, 0.6f, this.trailColor, new Color(this.trailColor.getRed(), this.trailColor.getGreen(), this.trailColor.getBlue(), 0), 1);
 			}
-			this.previousPosition.copy(this.position);
+			this.previousPosition.set(this.position);
 			super.update(deltaTime);
 			if(this.position.y <= 0) {
-				this.position.copy(this.previousPosition);
+				this.position.set(this.previousPosition);
 				this.updateHitbox();
 				this.setAngle(-this.angle);
 				BreakoutSound.HIT.play(false);
 			}
 			if(this.position.x <= 0 || this.position.x + this.size.x >= GameEngine.displayWidth) {
-				this.position.copy(this.previousPosition);
+				this.position.set(this.previousPosition);
 				this.updateHitbox();
 				this.setAngle((float) Math.PI - this.angle);
 				BreakoutSound.HIT.play(false);

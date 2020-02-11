@@ -4,8 +4,8 @@ import java.util.Random;
 
 public final class Maths {
 	
-	public static final float PI = 3.14159265f;
-	public static final float PI_2 = 6.28318530f;
+	public static final float PI = (float) Math.PI;
+	public static final float PI2 = (float) (Math.PI * 2);
 	
 	public static float map(float x, float a, float b, float c, float d) {
 		return (x - a) / (b - a) * (d - c) + c;
@@ -19,6 +19,22 @@ public final class Maths {
 		return a + (b - a) * t;
 	}
 	
+	public static float sqrt(float x) {
+		return (float) Math.sqrt(x);
+	}
+	
+	public static float clamp(float value, float min, float max) {
+		if(value < min) return min;
+		else if(value > max) return max;
+		return value;
+	}
+	
+	public static int clamp(int value, int min, int max) {
+		if(value < min) return min;
+		else if(value > max) return max;
+		return value;
+	}
+	
 	public static <T extends Comparable<T>> T clamp(T value, T min, T max) {
 		if(value.compareTo(min) < 0) {
 			return min;
@@ -30,8 +46,8 @@ public final class Maths {
 	
 	//for large angles and preserving accuracy
 	public static float wrapAngle(float theta) {
-		float m = theta % Maths.PI_2;
-		return (m > Maths.PI) ? (m - Maths.PI_2) : m;
+		float m = theta % Maths.PI2;
+		return (m > Maths.PI) ? (m - Maths.PI2) : m;
 	}
 	
 	public static double randomGaussian() {

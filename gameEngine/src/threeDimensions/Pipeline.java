@@ -5,10 +5,15 @@ import shaders.Shader;
 
 public class Pipeline {
 
+	public static final int TRIANGLE_MODE = 0;
+	public static final int LINE_MODE = 1;
+	
 	private Graphics3D g3d;
 	private ZBuffer depthBuffer;
 	private Shader s;
 	private ScreenTransformer st;
+	
+	private int drawMode = TRIANGLE_MODE;
 	
 	public class ScreenTransformer {
 		private float xFactor, yFactor;
@@ -40,6 +45,10 @@ public class Pipeline {
 		this.s = s;
 		this.st = new ScreenTransformer();
 		this.depthBuffer = new ZBuffer();
+	}
+	
+	public void setDrawMode(int mode) {
+		this.drawMode = mode;
 	}
 	
 	public void setShader(Shader s) {
@@ -145,7 +154,11 @@ public class Pipeline {
 		st.transform(t.v1);
 		st.transform(t.v2);
 		
-		drawTriangle(t);
+		if(this.drawMode == TRIANGLE_MODE) {
+			drawTriangle(t);
+		} else if(this.drawMode == LINE_MODE) {
+			this.g3d.drawTriangle(t, PackedColor.White);
+		}
 	}
 	
 	private void drawTriangle(Triangle triangle) {

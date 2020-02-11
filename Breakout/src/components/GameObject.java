@@ -41,7 +41,7 @@ public abstract class GameObject {
 	public void setVelocity(Vec2 velocity) {
 		this.velocity = velocity;
 		this.angle = (float) Math.atan2(velocity.y, velocity.x);
-		this.speed = this.velocity.len();
+		this.speed = this.velocity.mag();
 	}
 	
 	public void setVelocity(float angle,float speed) {

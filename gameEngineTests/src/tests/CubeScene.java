@@ -3,15 +3,18 @@ package tests;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
-import components.Cube;
-import components.Skybox;
+import components.Primitive;
 import gameEngine.GameEngine;
 import gameEngine.GameLogic;
 import math.Maths;
-import shaders.TextureShader;
+import shaders.ColorShader;
+import shaders.Shader;
 import threeDimensions.Camera;
+import threeDimensions.GameObject;
 import threeDimensions.Graphics3D;
 import threeDimensions.Matrix;
+import threeDimensions.Mesh;
+import threeDimensions.PackedColor;
 import threeDimensions.Pipeline;
 import threeDimensions.Vec3;
 
@@ -25,14 +28,20 @@ public class CubeScene implements GameLogic {
 	private boolean paused = false;
 	
 	private Pipeline pipeline;
-	private TextureShader s;
+	private Shader s;
 	private Camera camera;
-	private Skybox sb;
+	//private Skybox sb;
+	GameObject cylinder;
+	Mesh m = new Mesh(
+			new int[] {0, 1, 2}, 
+			new int[] {3, 3}, 
+			new float[] {-1, 0, -1, 0, 1f, -1, 1f, 0, -1},
+			new float[] {255, 0, 0, 0, 255, 0, 0, 0, 255});
 	private Matrix projection;
 	
 	public static void main(String[] args) {
 		CubeScene cs = new CubeScene();
-		GameEngine gameEngine = new GameEngine(60, 60, 3, cs, 1280, 720, "CubeScene");
+		GameEngine gameEngine = new GameEngine(60, 60, 3, cs, 800, 800, "Line");
 	}
 	
 	@Override
@@ -42,11 +51,16 @@ public class CubeScene implements GameLogic {
 		this.camera = new Camera(0, 0, 0, 0, 0, 0);
 		this.projection = Matrix.ProjectionFOV(4, FOV, ASPECT_RATIO, 0.1f, 10f);
 		
-		this.s = new TextureShader();
+		this.s = new ColorShader();
 		this.pipeline = new Pipeline(s);
-		this.sb = new Skybox("/Users/infinity/Desktop/Coding Images/skybox.jpg");
+		//this.pipeline.setDrawMode(Pipeline.LINE_MODE);
+		this.cylinder = new GameObject(Primitive.extrude(40, 40, (float t, float h) -> {
+			return Maths.sqrt(0.25f - h*h);
+			}));
+		this.cylinder.setPosition(0, -0.5f, 2);
+		/*this.sb = new Skybox("/Users/infinity/Desktop/Coding Images/skybox.jpg");
 		sb.setScale(5);
-		this.s.setTexture(sb.getTexture());
+		this.s.setTexture(sb.getTexture());*/
 	}
 
 	@Override
@@ -131,20 +145,22 @@ public class CubeScene implements GameLogic {
 
 	@Override
 	public void render(Graphics3D g) {
+		//g.clear(PackedColor.White);
+		g.drawLine(300, 300, 600, 100, PackedColor.Black);
 		pipeline.beginFrame();
 		
-		Matrix view = this.camera.rotationInverse;/*.multiply(Matrix.Translation(this.camera.position._negate()));**/
-		Vec3 rotation = this.sb.getRotation();
-		Matrix world = Matrix.Translation(this.sb.getPosition())
+		Matrix view = this.camera.rotationInverse.multiply(Matrix.Translation(this.camera.position._negate()));
+		Vec3 rotation = this.cylinder.getRotation();
+		Matrix world = Matrix.Translation(this.cylinder.getPosition())
 				.multiply(Matrix.rotationZ(4, rotation.z))
 				.multiply(Matrix.rotationY(4, rotation.x))
 				.multiply(Matrix.rotationX(4, rotation.y))
-				.multiply(Matrix.Scale(4, this.sb.getScale()));
+				.multiply(Matrix.Scale(4, this.cylinder.getScale()));
 
 		this.s.setWorld(world);
 		this.s.setView(view);
 		this.s.setProjection(this.projection);
-		pipeline.draw(g, this.sb.getMesh());
+		pipeline.draw(g, m);
 		
 	}
 }
