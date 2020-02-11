@@ -59,7 +59,33 @@ In practice, we can do this by assigning a color to each vertex, and *when we in
 
 Remarkable.
 
+So far, however, everything we have done is in two-dimensions. Well, we shall now begin this more interesting part of our journey. It will inevitably contain more math, but seeing as this is just the high-level view, I will try to be concise and descriptive.
 
+The first thing we need to recognize is the existence of several ***spaces*** that define the area that our vertices will transform through to eventually reach our window, or screen space. We can think of all the pre-screen space spaces as their own three dimensional coordinate system defined in a certain way so as that the intermediary transformations between such spaces map all points on one space to all points on another. Don't worry if this seems a bit esoteric for now; it will become clear with example.
+
+#### Model/Local Space
+This space is almost ubiquitous to all graphics pipelines, and its main purpose is to define the space with which we define the *meshes* for the models we want to render, hence the name. A mesh is just a fancy way of saying a combination of vertices and indices that make up the triangles of a model. The origin of this coordinate system is defined as the local origin of a model, and as such, any coordinates define in said space appear relative to that local origin.
+> For example, say we were defining a cube with center (0, 0, 0). In model space, we could then say the left face of the cube would be at x = -1, and so on.
+
+We do this for two reasons: One, using a local origin means that we can utilize that point as a sort of *anchor* or handle we can drag around, and because the other model vertices are defined relative to that local origin, they move around as well (Good for setting an object's center). Two, it means we can begin to reuse models without having to define their actual vertices where we want them to be in the world.
+
+<img width="50%" height="50%" src="media/model_space.png">
+
+#### World Space
+This is another common space and is where all of the objects in your "world" will be placed, relative to a *global origin*. This space encodes the position, rotation, and scale of objects from the model space, and as such, the three transformations that must occur to go between the model space and world space are the aforementioned position, rotation, and scale transformations. (We will talk specifically about these transformations further down). In essence, the world space, is a representation of the current *state* of the environment.
+
+![](media/world_space.png)
+
+#### View/Camera Space
+Although we will expand on this when we get to cameras, the view space is defined by the trapezoidal **frustum** cast out from the camera that represents what the viewer can actually *see*. In contrast with the world space, which has all the data about all the objects in a scene, the view space is a sort of container that allows us to determine what should or should not be rendered. More specifically, the view space should take into account the *camera's* translation and rotation in the world. This becomes incredibly important when rendering large scenes with many objects and triangles; the performance gain is immeasurable.
+> Say we are rendering a city landscape. As the viewer walks through the city, objects come in and out of *view*, but they *still exist in the *world*. We can use this view space to get an idea for what objects should be culled.
+
+![](media/view_space.png)
+
+#### Clip/Cull Space
+It is important to note, however, that
+
+![](media/clip_space.png)
 
 ---
 
