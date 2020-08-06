@@ -1,9 +1,9 @@
 package shaders;
 
-import threeDimensions.Matrix;
+import math.Matrix;
+import math.Vec4;
 import threeDimensions.PackedColor;
 import threeDimensions.Triangle;
-import threeDimensions.Vec4;
 import threeDimensions.Vertex;
 
 public class Shader {
@@ -36,10 +36,26 @@ public class Shader {
 		return this.projection;
 	}
 	
+	public Matrix getView() {
+		return this.view;
+	}
+	
+	public Matrix getWorld() {
+		return this.world;
+	}
+	
 	//GeometryShader Fields
 	
 	//FragmentShader Fields
 	protected int defaultColor = PackedColor.White;
+	
+	public void setDefaultColor(int color) {
+		this.defaultColor = color;
+	}
+	
+	public int getDefaultColor() {
+		return this.defaultColor;
+	}
 	
 	public Vertex VertexShader(float[] v)  {
 		Vec4 position = new Vec4(v[0], v[1], v[2], 1.0f);

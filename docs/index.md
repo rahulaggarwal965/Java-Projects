@@ -83,7 +83,7 @@ Although we will expand on this when we get to cameras, the view space is define
 ![](media/view_space.png)
 
 #### Clip/Cull Space
-It is important to note, however, that
+It is important to note, however, that when we actually do the removal of objects in the view space is not desirable not only because it is a trapezoidal frustum, but also because we want to be able to clip using different transformations from the view space to 
 
 ![](media/clip_space.png)
 

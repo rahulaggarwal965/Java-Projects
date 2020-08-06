@@ -1,10 +1,10 @@
 package shaders;
 
-import threeDimensions.Matrix;
+import math.Matrix;
+import math.Vec3;
+import math.Vec4;
 import threeDimensions.PackedColor;
 import threeDimensions.Triangle;
-import threeDimensions.Vec3;
-import threeDimensions.Vec4;
 import threeDimensions.Vertex;
 
 public class GeometryLightShader extends ColorShader {

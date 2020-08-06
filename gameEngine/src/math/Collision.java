@@ -100,5 +100,81 @@ public final class Collision {
 	public static boolean lineRectangleIntersection(float x1, float y1, float x2, float y2, float rx, float ry, float w, float h) {
 		return lineLineIntersection(x1, y1, x2, y2, rx, ry, rx+w, ry) || lineLineIntersection(x1, y1, x2, y2, rx+w, ry, rx+w, ry+h) || lineLineIntersection(x1, y1, x2, y2, rx+w, ry+h, rx, ry+h) || lineLineIntersection(x1, y1, x2, y2, rx, ry+h, rx, ry);
 	}
+	
+	public static boolean RayOBBIntersection(Vec3 rayOrigin, Vec3 rayDirection, Vec3 bbMin, Vec3 bbMax, Matrix world) {
+		float tMin = 0.0f, tMax = 100000.0f;
+		
+		float[] matrix = world.getData();
+		Vec3 bbPos = new Vec3(matrix[3], matrix[7], matrix[11]);
+		Vec3 delta = bbPos._subtract(rayOrigin);
+		
+		{
+			Vec3 xAxis = new Vec3(matrix[0], matrix[4], matrix[8]);
+			float e = xAxis.dot(delta);
+			float f = rayDirection.dot(xAxis);
+			
+			if(Math.abs(f) > 0.001f) {
+				float t1 = (e + bbMin.x)/f;
+				float t2 = (e + bbMax.x)/f;
+				
+				if(t1 > t2) {
+					float temp = t1; t1 = t2; t2 = temp;
+				}
+				
+				if(t2 < tMax) tMax = t2;
+				if(t1 > tMin) tMin = t1;
+				
+				if(tMax < tMin) return false;
+			} else {
+				if(bbMin.x - e > 0.0f || bbMax.x - e < 0.0f) return false;
+			}
+		}
+		
+		{
+			Vec3 yAxis = new Vec3(matrix[1], matrix[5], matrix[9]);
+			float e = yAxis.dot(delta);
+			float f = rayDirection.dot(yAxis);
+			
+			if(Math.abs(f) > 0.001f) {
+				float t1 = (e + bbMin.y)/f;
+				float t2 = (e + bbMax.y)/f;
+				
+				if(t1 > t2) {
+					float temp = t1; t1 = t2; t2 = temp;
+				}
+				
+				if(t2 < tMax) tMax = t2;
+				if(t1 > tMin) tMin = t1;
+				
+				if(tMax < tMin) return false;
+			} else {
+				if(bbMin.y - e > 0.0f || bbMax.y - e < 0.0f) return false;
+			}
+		} 
+		
+		{
+			Vec3 zAxis = new Vec3(matrix[2], matrix[6], matrix[10]);
+			float e = zAxis.dot(delta);
+			float f = rayDirection.dot(zAxis);
+			
+			if(Math.abs(f) > 0.001f) {
+				float t1 = (e + bbMin.z)/f;
+				float t2 = (e + bbMax.z)/f;
+				
+				if(t1 > t2) {
+					float temp = t1; t1 = t2; t2 = temp;
+				}
+				
+				if(t2 < tMax) tMax = t2;
+				if(t1 > tMin) tMin = t1;
+				
+				if(tMax < tMin) return false;
+			} else {
+				if(bbMin.z - e > 0.0f || bbMax.z - e < 0.0f) return false;
+			}
+		}
+		
+		return true;
+	}
 
 }

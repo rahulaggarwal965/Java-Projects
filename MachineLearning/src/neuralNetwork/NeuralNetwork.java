@@ -3,18 +3,18 @@ package neuralNetwork;
 public class NeuralNetwork {
 	
 	private int nLayers;
-	private NeuralMatrix[] weights;
-	private NeuralMatrix[] biases;
+	private Matrix[] weights;
+	private Matrix[] biases;
 	private ActivationFunction a;
 	
 	public NeuralNetwork(int[] shape, ActivationFunction a) {
 		this.nLayers = shape.length - 1;
-		this.weights = new NeuralMatrix[nLayers];
-		this.biases = new NeuralMatrix[nLayers];
+		this.weights = new Matrix[nLayers];
+		this.biases = new Matrix[nLayers];
 		for (int i = 0; i < nLayers; i++) {
-			weights[i] = new NeuralMatrix(i+ 1, i);
+			weights[i] = new Matrix(i+ 1, i);
 			weights[i].randomize();
-			biases[i] = new NeuralMatrix(i+1, 1); //Vector
+			biases[i] = new Matrix(i+1, 1); //Vector
 			biases[i].randomize();
 		}
 		
@@ -25,11 +25,11 @@ public class NeuralNetwork {
 	//Copy Constructor
 	public NeuralNetwork(NeuralNetwork n) {
 		this.nLayers = n.nLayers;
-		this.weights = new NeuralMatrix[nLayers];
-		this.biases = new NeuralMatrix[nLayers];
+		this.weights = new Matrix[nLayers];
+		this.biases = new Matrix[nLayers];
 		for (int i = 0; i < nLayers; i++) {
-			this.weights[i] = new NeuralMatrix(n.weights[i]);
-			this.biases[i] = new NeuralMatrix(n.biases[i]);
+			this.weights[i] = new Matrix(n.weights[i]);
+			this.biases[i] = new Matrix(n.biases[i]);
 		}
 		
 		this.a = n.a;
@@ -37,13 +37,13 @@ public class NeuralNetwork {
 	
 	public double[] predict(double[] inputs) {
 		
-		NeuralMatrix outputs = NeuralMatrix.vector(inputs);
+		Matrix outputs = Matrix.vector(inputs);
 		for (int i = 0; i < nLayers; i++) {
-			outputs = NeuralMatrix.multiply(this.weights[i], outputs);
+			outputs = Matrix.multiply(this.weights[i], outputs);
 			outputs.add(this.biases[i]);
 			outputs.map(a);
 		}
-		return NeuralMatrix.fromVector(outputs);
+		return Matrix.fromVector(outputs);
 		
 	}
 	

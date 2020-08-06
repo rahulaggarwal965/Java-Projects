@@ -1,7 +1,6 @@
 package math;
 
 import threeDimensions.PackedColor;
-import threeDimensions.Vec3;
 
 public class Gradient {
 

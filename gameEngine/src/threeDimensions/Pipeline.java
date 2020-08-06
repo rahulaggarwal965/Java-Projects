@@ -1,6 +1,7 @@
 package threeDimensions;
 
 import gameEngine.GameEngine;
+import math.Vec4;
 import shaders.Shader;
 
 public class Pipeline {
@@ -8,39 +9,19 @@ public class Pipeline {
 	public static final int TRIANGLE_MODE = 0;
 	public static final int LINE_MODE = 1;
 	
+	public static final int RGB = 0;
+	public static final int ARGB = 1;
+	public static final int ADDITIVE = 2;
+		
 	private Graphics3D g3d;
 	private ZBuffer depthBuffer;
 	private Shader s;
 	private ScreenTransformer st;
 	
 	private int drawMode = TRIANGLE_MODE;
+	private int colorMode = RGB;
+	private boolean depthTest = true;
 	
-	public class ScreenTransformer {
-		private float xFactor, yFactor;
-		
-		public ScreenTransformer() {
-			this.xFactor = (float) GameEngine.displayWidth / 2.0f;
-			this.yFactor = (float) GameEngine.displayHeight / 2.0f;
-		}
-		
-		public void transform(Vertex v) {
-			final float wInv = 1.0f/v.position.w;
-			v.multiply(wInv);
-			
-			v.position.x = (v.position.x + 1.0f) * xFactor;
-			v.position.y = (-v.position.y + 1.0f) * yFactor;
-			
-			v.position.w = wInv;
-		}
-		
-		public Vertex getTransformed(Vertex v) {
-			Vertex r = new Vertex(v);
-			this.transform(r);
-			return r;
-		}
-		
-	}
-
 	public Pipeline(Shader s) {
 		this.s = s;
 		this.st = new ScreenTransformer();
@@ -51,8 +32,20 @@ public class Pipeline {
 		this.drawMode = mode;
 	}
 	
+	public void setColorMode(int mode) {
+		this.colorMode = mode;
+	}
+	
+	public void setDepthTest(boolean state) {
+		this.depthTest = state;
+	}
+	
 	public void setShader(Shader s) {
 		this.s = s;
+	}
+	
+	public Shader getShader() {
+		return this.s;
 	}
 	
 	public void beginFrame() {
@@ -157,7 +150,7 @@ public class Pipeline {
 		if(this.drawMode == TRIANGLE_MODE) {
 			drawTriangle(t);
 		} else if(this.drawMode == LINE_MODE) {
-			this.g3d.drawTriangle(t, PackedColor.White);
+			this.g3d.drawTriangle(t, this.s.getDefaultColor());
 		}
 	}
 	
@@ -234,12 +227,18 @@ public class Pipeline {
 			for(int x = xStart; x < xEnd; x++, iteratorLine.add(dIteratorLine)) {
 				
 				
-				if(depthBuffer.testAndSet(x, y, iteratorLine.position.z)) {
+				if(!this.depthTest || depthBuffer.testAndSet(x, y, iteratorLine.position.z)) {
 					final float w = 1.0f/ iteratorLine.position.w;
 					
 					final Vertex attributes = iteratorLine._multiply(w);
 					
-					this.g3d.drawPixel(x, y, this.s.FragmentShader(attributes, t));
+					if(this.colorMode == Pipeline.RGB) {
+						this.g3d.drawPixel(x, y, this.s.FragmentShader(attributes, t));
+					} else if(this.colorMode == Pipeline.ARGB) {
+						this.g3d.drawAlphaPixel(x, y, this.s.FragmentShader(attributes, t));
+					} else if(this.colorMode == Pipeline.ADDITIVE) {
+						this.g3d.drawAdditivePixel(x, y, this.s.FragmentShader(attributes, t));
+					}
 				}
 			}
 		}

@@ -10,7 +10,7 @@ public class Skybox extends GameObject{
 	private Texture texture;
 
 	public Skybox(String textureFile) {
-		this.texture = GameEngine.loadImage(textureFile);
+		this.texture = Texture.loadImageFile(textureFile);
 		this.setMesh(Skybox.generateMesh());
 		
 	}

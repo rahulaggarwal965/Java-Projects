@@ -1,7 +1,5 @@
 package math;
 
-import threeDimensions.Vec2;
-
 public final class Noise {
 	
 	static public double noise(double x, double y, double z, int octaves, double persistence, double lacunarity, Vec2[] offsets) {

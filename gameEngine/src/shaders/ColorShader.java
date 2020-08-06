@@ -1,8 +1,8 @@
 package shaders;
 
+import math.Vec4;
 import threeDimensions.PackedColor;
 import threeDimensions.Triangle;
-import threeDimensions.Vec4;
 import threeDimensions.Vertex;
 
 public class ColorShader extends Shader {

@@ -150,36 +150,5 @@ public class GameEngine extends Canvas implements Runnable {
 		g2d.dispose();
 		this.strategy.show();
 	}
-
-	public static Texture loadImage(String filepath) {
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(filepath));
-
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-
-		int[] pixels = new int[img.getWidth() * img.getHeight()];
-		if (img.getType() == BufferedImage.TYPE_3BYTE_BGR) {
-			byte[] src = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-			for (int i = 0, j = 0; i < pixels.length; i++ ) {
-				byte b = src[j++];
-				byte g = src[j++];
-				byte r = src[j++];
-				pixels[i] = ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
-			}
-		} else if(img.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
-			byte[] src = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-			for (int i = 0, j = 0; i < pixels.length; i++ ) {
-				byte a = src[j++];
-				byte b = src[j++];
-				byte g = src[j++];
-				byte r = src[j++];
-				pixels[i] = ((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
-			}
-		}
-		return new Texture(pixels, img.getWidth(), img.getHeight());
-	}
 	
 }

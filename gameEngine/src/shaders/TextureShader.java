@@ -1,14 +1,14 @@
 package shaders;
 
+import math.Vec4;
 import threeDimensions.Texture;
 import threeDimensions.Triangle;
-import threeDimensions.Vec4;
 import threeDimensions.Vertex;
 
 public class TextureShader extends Shader {
 
-	private Texture texture;
-	private float tWidth, tHeight, tXClamp, tYClamp;
+	protected Texture texture;
+	protected float tWidth, tHeight, tXClamp, tYClamp;
 	
 	public void setTexture(Texture texture) {
 		this.texture = texture;

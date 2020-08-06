@@ -3,6 +3,7 @@ package threeDimensions;
 import java.util.Arrays;
 
 import math.Maths;
+import math.Vec4;
 
 public class Vertex {
 

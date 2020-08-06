@@ -55,7 +55,7 @@ public class MeshTest implements GameLogic{
 	@Override
 	public void init(Graphics2D g) throws Exception {
 		this.camera = new Camera(0, 100, 0, 0, 0, 0);
-		this.camera.rotationAngles.x = (float) Math.PI/2;
+		this.camera.rotation.x = (float) Math.PI/2;
 		this.projection = Matrix.ProjectionFOV(4, FOV, ASPECT_RATIO, 0.05f, 1000f);
 		
 		this.s = new GeometryLightShader();
@@ -109,26 +109,26 @@ public class MeshTest implements GameLogic{
 		
 		//Rotation
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_LEFT]) {
-			this.camera.rotationAngles.y = Maths.wrapAngle(this.camera.rotationAngles.y - 0.05f);
+			this.camera.rotation.y = Maths.wrapAngle(this.camera.rotation.y - 0.05f);
 			//this.modelPosition1.x -= 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_RIGHT]) {
-			this.camera.rotationAngles.y = Maths.wrapAngle(this.camera.rotationAngles.y + 0.05f);
+			this.camera.rotation.y = Maths.wrapAngle(this.camera.rotation.y + 0.05f);
 			//this.modelPosition1.x += 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_UP]) {
-			this.camera.rotationAngles.x = Maths.wrapAngle(this.camera.rotationAngles.x - 0.05f);
+			this.camera.rotation.x = Maths.wrapAngle(this.camera.rotation.x - 0.05f);
 			//this.modelPosition1.z += 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_DOWN]) {
-			this.camera.rotationAngles.x = Maths.wrapAngle(this.camera.rotationAngles.x + 0.05f);
+			this.camera.rotation.x = Maths.wrapAngle(this.camera.rotation.x + 0.05f);
 			//this.modelPosition1.z -= 2f;
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_Q]) {
-			this.camera.rotationAngles.z = Maths.wrapAngle(this.camera.rotationAngles.z + 0.05f);
+			this.camera.rotation.z = Maths.wrapAngle(this.camera.rotation.z + 0.05f);
 		}
 		if(GameEngine.keyboard.keysPressed[KeyEvent.VK_E]) {
-			this.camera.rotationAngles.z = Maths.wrapAngle(this.camera.rotationAngles.z - 0.05f);
+			this.camera.rotation.z = Maths.wrapAngle(this.camera.rotation.z - 0.05f);
 		}
 			
 		if(GameEngine.keyboard.keysTyped[KeyEvent.VK_ESCAPE]) {
@@ -154,7 +154,7 @@ public class MeshTest implements GameLogic{
 	public void render(Graphics3D g) {
 		pipeline.beginFrame();
 		
-		Matrix view = this.camera.rotationInverse.multiply(Matrix.Translation(this.camera.position._negate()));
+		Matrix view = this.camera.getViewMatrix();
 		
 		Matrix world = Matrix.Translation(this.modelPosition0);
 		

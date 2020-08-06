@@ -43,7 +43,7 @@ public class Sound {
 		}).start();
 	}
 	
-	public static synchronized void playClip(Clip clip) {
+	public static synchronized void stopClip(Clip clip) {
 		clip.stop();
 	}
 }

@@ -1,14 +1,16 @@
 package threeDimensions;
 
+import math.Vec3;
+
 public class GameObject {
 
-    private Mesh mesh;
+    protected Mesh mesh;
     
-    private final Vec3 position;
+    protected final Vec3 position;
     
-    private float scale;
+    protected float scale;
 
-    private final Vec3 rotation;
+    protected final Vec3 rotation;
 
     public GameObject() {
         position = new Vec3(0, 0, 0);

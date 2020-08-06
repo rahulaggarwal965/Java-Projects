@@ -3,6 +3,8 @@ package threeDimensions;
 import java.awt.Color;
 
 import math.Maths;
+import math.Vec3;
+import math.Vec4;
 
 public class PackedColor {
 	
@@ -59,6 +61,14 @@ public class PackedColor {
 	
 	public static Vec4 toVector(Color color) {
 		return new Vec4(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+	}
+	
+	public static Vec4 toVector(int col) {
+		return new Vec4(
+				(col >> 16) & 0xff,
+				(col >> 8) & 0xff,
+				col & 0xff,
+				(col >> 24) & 0xff);
 	}
 	
 	//h0 - h1 []0 - 360] s0 - s1 [0-100] b0 - b1 [0-100]

@@ -6,6 +6,7 @@ public final class Maths {
 	
 	public static final float PI = (float) Math.PI;
 	public static final float PI2 = (float) (Math.PI * 2);
+	public static final float EPSILON = 0.00000000001f;
 	
 	public static float map(float x, float a, float b, float c, float d) {
 		return (x - a) / (b - a) * (d - c) + c;
@@ -19,8 +20,20 @@ public final class Maths {
 		return a + (b - a) * t;
 	}
 	
+	public static float inverseLerp(float a, float b, float value) {
+		return (value - a) / (b - a);
+	}
+	
 	public static float sqrt(float x) {
 		return (float) Math.sqrt(x);
+	}
+	
+	public static float random(float val) {
+		return (float) (Math.random() * val);
+	}
+	
+	public static float pow(float a, float b) {
+		return (float) Math.pow(a, b);
 	}
 	
 	public static float clamp(float value, float min, float max) {
@@ -33,6 +46,14 @@ public final class Maths {
 		if(value < min) return min;
 		else if(value > max) return max;
 		return value;
+	}
+	
+	public static float pointTowards(float a, float b, float a1, float b1) {
+		return (float) Math.atan2(b1 - b, a1 - a);
+	}
+	
+	public static float atan2(float y, float x) {
+		return (float) Math.atan2(y, x);
 	}
 	
 	public static <T extends Comparable<T>> T clamp(T value, T min, T max) {
@@ -57,6 +78,10 @@ public final class Maths {
 	
 	public static double randomBilateral() {
 		return Math.random() * 2 -1;
+	}
+	
+	public static float randomBilateral(float val) {
+		return Maths.random(val) * 2 - val;
 	}
 	
 	public static double distance(float x1, float y1, float x2, float y2) {
